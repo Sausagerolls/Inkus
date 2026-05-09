@@ -47,7 +47,8 @@ enum ExportService {
     }
 
     static func markdown(for journal: Journal, entries: [Entry]? = nil) -> String {
-        let sorted = (entries ?? journal.entries).sorted { $0.createdAt > $1.createdAt }
+        let source = entries ?? journal.entries ?? []
+        let sorted = source.sorted { $0.createdAt > $1.createdAt }
         var out: [String] = []
         out.append("# \(journal.name)")
         out.append("")
@@ -120,7 +121,7 @@ enum ExportService {
     }
 
     static func exportJournalPDF(_ journal: Journal) throws -> URL {
-        let entries = journal.entries.sorted { $0.createdAt > $1.createdAt }
+        let entries = (journal.entries ?? []).sorted { $0.createdAt > $1.createdAt }
         let view = ExportJournalPDFView(journal: journal, entries: entries)
             .frame(width: 612)
         let renderer = ImageRenderer(content: view)

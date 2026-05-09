@@ -3,13 +3,14 @@ import SwiftData
 
 @Model
 final class DailyPrompt {
-    @Attribute(.unique) var id: UUID
-    var date: Date              // start of the local day
-    var promptText: String
-    var followUps: [String]     // 0–3 follow-up questions
-    var generatedAt: Date
-    var wasUsed: Bool           // did user start an entry from it?
-    var sourceIsAI: Bool        // false = fallback bank
+    // CloudKit constraints: no .unique attributes; every property optional or with default.
+    var id: UUID = UUID()
+    var date: Date = Date.now           // start of the local day
+    var promptText: String = ""
+    var followUps: [String] = []        // 0–3 follow-up questions
+    var generatedAt: Date = Date.now
+    var wasUsed: Bool = false           // did user start an entry from it?
+    var sourceIsAI: Bool = false        // false = fallback bank
 
     init(date: Date, promptText: String, followUps: [String], sourceIsAI: Bool) {
         self.id = UUID()

@@ -26,7 +26,10 @@ struct JournalsListView: View {
                             Text(journal.name)
                                 .font(.body.weight(.medium))
                                 .foregroundStyle(.primary)
-                            Text("\(journal.entries.count) \(journal.entries.count == 1 ? "entry" : "entries")")
+                            Text({
+                                let n = journal.entries?.count ?? 0
+                                return "\(n) \(n == 1 ? "entry" : "entries")"
+                            }())
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }

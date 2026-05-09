@@ -3,12 +3,13 @@ import SwiftData
 
 @Model
 final class WeeklyReflection {
-    @Attribute(.unique) var id: UUID
-    var weekStartDate: Date     // ISO Monday 00:00 local
-    var summary: String         // 3–4 paragraph narrative
-    var themes: [String]        // top themes: ["work stress", "running", "sleep"]
-    var moodArcDescription: String
-    var generatedAt: Date
+    // CloudKit constraints: no .unique attributes; every property optional or with default.
+    var id: UUID = UUID()
+    var weekStartDate: Date = Date.now  // ISO Monday 00:00 local
+    var summary: String = ""             // 3–4 paragraph narrative
+    var themes: [String] = []            // top themes
+    var moodArcDescription: String = ""
+    var generatedAt: Date = Date.now
 
     var journal: Journal?
 

@@ -6,14 +6,66 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		843747032FAFF39B00E7579F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843747022FAFF39B00E7579F /* WidgetKit.framework */; };
+		843747052FAFF39B00E7579F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843747042FAFF39B00E7579F /* SwiftUI.framework */; };
+		843747142FAFF39D00E7579F /* InklingWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 843747002FAFF39B00E7579F /* InklingWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		843747122FAFF39D00E7579F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 843746812FAFDAEE00E7579F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 843746FF2FAFF39B00E7579F;
+			remoteInfo = InklingWidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		843747192FAFF39D00E7579F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				843747142FAFF39D00E7579F /* InklingWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		843746892FAFDAEE00E7579F /* Inkling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inkling.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		843747002FAFF39B00E7579F /* InklingWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = InklingWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		843747022FAFF39B00E7579F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		843747042FAFF39B00E7579F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		8437471A2FAFF3A800E7579F /* InklingWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InklingWidgetsExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		843747152FAFF39D00E7579F /* Exceptions for "InklingWidgets" folder in "InklingWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 843746FF2FAFF39B00E7579F /* InklingWidgetsExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8437468B2FAFDAEE00E7579F /* Inkling */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Inkling;
+			sourceTree = "<group>";
+		};
+		843747062FAFF39B00E7579F /* InklingWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				843747152FAFF39D00E7579F /* Exceptions for "InklingWidgets" folder in "InklingWidgetsExtension" target */,
+			);
+			path = InklingWidgets;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,13 +78,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		843746FD2FAFF39B00E7579F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				843747052FAFF39B00E7579F /* SwiftUI.framework in Frameworks */,
+				843747032FAFF39B00E7579F /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		843746802FAFDAEE00E7579F = {
 			isa = PBXGroup;
 			children = (
+				8437471A2FAFF3A800E7579F /* InklingWidgetsExtension.entitlements */,
 				8437468B2FAFDAEE00E7579F /* Inkling */,
+				843747062FAFF39B00E7579F /* InklingWidgets */,
+				843747012FAFF39B00E7579F /* Frameworks */,
 				8437468A2FAFDAEE00E7579F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +105,18 @@
 			isa = PBXGroup;
 			children = (
 				843746892FAFDAEE00E7579F /* Inkling.app */,
+				843747002FAFF39B00E7579F /* InklingWidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		843747012FAFF39B00E7579F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				843747022FAFF39B00E7579F /* WidgetKit.framework */,
+				843747042FAFF39B00E7579F /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -55,10 +129,12 @@
 				843746852FAFDAEE00E7579F /* Sources */,
 				843746862FAFDAEE00E7579F /* Frameworks */,
 				843746872FAFDAEE00E7579F /* Resources */,
+				843747192FAFF39D00E7579F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				843747132FAFF39D00E7579F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8437468B2FAFDAEE00E7579F /* Inkling */,
@@ -69,6 +145,28 @@
 			productName = Inkling;
 			productReference = 843746892FAFDAEE00E7579F /* Inkling.app */;
 			productType = "com.apple.product-type.application";
+		};
+		843746FF2FAFF39B00E7579F /* InklingWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 843747162FAFF39D00E7579F /* Build configuration list for PBXNativeTarget "InklingWidgetsExtension" */;
+			buildPhases = (
+				843746FC2FAFF39B00E7579F /* Sources */,
+				843746FD2FAFF39B00E7579F /* Frameworks */,
+				843746FE2FAFF39B00E7579F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				843747062FAFF39B00E7579F /* InklingWidgets */,
+			);
+			name = InklingWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = InklingWidgetsExtension;
+			productReference = 843747002FAFF39B00E7579F /* InklingWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -81,6 +179,9 @@
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					843746882FAFDAEE00E7579F = {
+						CreatedOnToolsVersion = 26.4;
+					};
+					843746FF2FAFF39B00E7579F = {
 						CreatedOnToolsVersion = 26.4;
 					};
 				};
@@ -100,12 +201,20 @@
 			projectRoot = "";
 			targets = (
 				843746882FAFDAEE00E7579F /* Inkling */,
+				843746FF2FAFF39B00E7579F /* InklingWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		843746872FAFDAEE00E7579F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		843746FE2FAFF39B00E7579F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +231,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		843746FC2FAFF39B00E7579F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		843747132FAFF39D00E7579F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 843746FF2FAFF39B00E7579F /* InklingWidgetsExtension */;
+			targetProxy = 843747122FAFF39D00E7579F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		843746922FAFDAF000E7579F /* Debug */ = {
@@ -246,6 +370,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Inkling/Inkling.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ;
@@ -290,6 +415,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Inkling/Inkling.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ;
@@ -329,6 +455,73 @@
 			};
 			name = Release;
 		};
+		843747172FAFF39D00E7579F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = InklingWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = InklingWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = InklingWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkling.InklingWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		843747182FAFF39D00E7579F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = InklingWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = InklingWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = InklingWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkling.InklingWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -346,6 +539,15 @@
 			buildConfigurations = (
 				843746952FAFDAF000E7579F /* Debug */,
 				843746962FAFDAF000E7579F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		843747162FAFF39D00E7579F /* Build configuration list for PBXNativeTarget "InklingWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				843747172FAFF39D00E7579F /* Debug */,
+				843747182FAFF39D00E7579F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

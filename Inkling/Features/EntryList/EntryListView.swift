@@ -109,6 +109,9 @@ struct EntryListView: View {
             SettingsView()
         }
         .sensoryFeedback(.success, trigger: reflectionReadyTrigger)
+        .onReceive(NotificationCenter.default.publisher(for: .inklingNewEntryRequested)) { _ in
+            startNewEntry()
+        }
         .sheet(item: $newDraft) { draft in
             NavigationStack {
                 EntryEditorView(
@@ -223,11 +226,29 @@ struct EntryListView: View {
         guard todaysPrompt == nil else { return }
         let service = DailyPromptService(context: modelContext)
         todaysPrompt = await service.todaysPrompt()
+        publishPromptToWidget()
     }
 
     private func refreshPrompt() async {
         let service = DailyPromptService(context: modelContext)
         todaysPrompt = await service.regenerate()
+        publishPromptToWidget()
+    }
+
+    /// Mirror today's prompt into the App Group cache so the widget can read it
+    /// without touching SwiftData or running AI inference itself.
+    private func publishPromptToWidget() {
+        guard let prompt = todaysPrompt else { return }
+        let accentHex = currentJournal?.accentColorHex ?? "#4F46E5"
+        let snapshot = SharedPromptCache.Snapshot(
+            date: prompt.date,
+            promptText: prompt.promptText,
+            followUps: prompt.followUps,
+            sourceIsAI: prompt.sourceIsAI,
+            accentHex: accentHex
+        )
+        SharedPromptCache.write(snapshot)
+        WidgetReloadCoordinator.reloadPromptWidgets()
     }
 
     private func evaluateReflectionState() {

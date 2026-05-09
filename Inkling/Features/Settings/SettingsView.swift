@@ -26,6 +26,7 @@ struct SettingsView: View {
                 journalsSection
                 notificationsSection
                 aiSection
+                syncSection
                 privacySection
                 exportSection
                 aboutSection
@@ -148,6 +149,30 @@ struct SettingsView: View {
         }
     }
 
+    private var syncSection: some View {
+        Section {
+            HStack(spacing: Spacing.s) {
+                Image(systemName: "icloud")
+                    .foregroundStyle(Color.inkAccent)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("iCloud sync")
+                        .font(.callout.weight(.medium))
+                    Text("Entries sync through your iCloud account.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            Link(destination: URL(string: UIApplication.openSettingsURLString)!) {
+                Label("Open iOS Settings", systemImage: "arrow.up.right.square")
+            }
+        } header: {
+            Text("Sync")
+        } footer: {
+            Text("Text entries, mood, and tags sync via your private iCloud database. Photos stay on this device for now (sync coming in a future update). Toggle iCloud Drive for Inkling in iOS Settings to enable or disable sync.")
+        }
+    }
+
     private var privacySection: some View {
         Section("Privacy") {
             NavigationLink {
@@ -182,7 +207,7 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
             }
-            Link(destination: URL(string: "mailto:hello@inkling.app")!) {
+            Link(destination: URL(string: "mailto:contact@giantmushroom.studio")!) {
                 Label("Contact", systemImage: "envelope")
             }
         }

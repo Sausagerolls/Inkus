@@ -3,18 +3,19 @@ import SwiftData
 
 @Model
 final class Journal {
-    @Attribute(.unique) var id: UUID
-    var name: String
-    var iconName: String       // SF Symbol identifier
-    var accentColorHex: String // e.g. "#4F46E5"
-    var sortOrder: Int
-    var createdAt: Date
+    // CloudKit constraints: no .unique attributes; every property optional or with default.
+    var id: UUID = UUID()
+    var name: String = "Journal"
+    var iconName: String = "book.closed"   // SF Symbol identifier
+    var accentColorHex: String = "#4F46E5"
+    var sortOrder: Int = 0
+    var createdAt: Date = Date.now
 
     @Relationship(deleteRule: .cascade, inverse: \Entry.journal)
-    var entries: [Entry] = []
+    var entries: [Entry]? = []
 
     @Relationship(deleteRule: .cascade, inverse: \WeeklyReflection.journal)
-    var reflections: [WeeklyReflection] = []
+    var reflections: [WeeklyReflection]? = []
 
     init(
         name: String,

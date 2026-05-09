@@ -3,11 +3,18 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
     @AppStorage("notificationsEnabled") private var notificationsEnabled = false
     @AppStorage("notificationHour") private var notificationHour: Int = 19
     @AppStorage("notificationMinute") private var notificationMinute: Int = 0
     @AppStorage("aiSuggestionsEnabled") private var aiSuggestionsEnabled = true
+    @AppStorage("currentJournalID") private var currentJournalID: String = ""
+
+    @Query(sort: \Journal.sortOrder) private var allJournals: [Journal]
+    @State private var generatedReflection: WeeklyReflection?
+    @State private var isGeneratingReflection = false
+    @State private var reflectionError: String?
 
     @State private var notificationStatus: NotificationScheduler.AuthorizationState = .notDetermined
     @State private var notificationTime: Date = Calendar.current.date(
@@ -36,6 +43,11 @@ struct SettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
+                }
+            }
+            .sheet(item: $generatedReflection) { reflection in
+                NavigationStack {
+                    WeeklyReflectionView(reflection: reflection)
                 }
             }
             .task {
@@ -142,10 +154,47 @@ struct SettingsView: View {
                 Label("Use AI suggestions", systemImage: "wand.and.stars")
             }
             .disabled(!AIAvailability.isAvailable)
+
+            Button {
+                generateReflectionNow()
+            } label: {
+                HStack {
+                    Label("Generate this week's reflection", systemImage: "sparkles.rectangle.stack")
+                    Spacer()
+                    if isGeneratingReflection {
+                        ProgressView().controlSize(.small)
+                    }
+                }
+            }
+            .disabled(!AIAvailability.isAvailable || isGeneratingReflection)
+
+            if let message = reflectionError {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(.orange)
+            }
         } header: {
             Text("AI")
         } footer: {
-            Text("AI features run entirely on your device. Turning this off uses a curated bundled prompt bank.")
+            Text("AI features run entirely on your device. Turning this off uses a curated bundled prompt bank. \"Generate this week's reflection\" uses entries from the current Mon–Sun.")
+        }
+    }
+
+    private var currentJournal: Journal? {
+        allJournals.first { $0.id.uuidString == currentJournalID } ?? allJournals.first
+    }
+
+    private func generateReflectionNow() {
+        reflectionError = nil
+        isGeneratingReflection = true
+        Task { @MainActor in
+            defer { isGeneratingReflection = false }
+            let service = ReflectionService(context: modelContext)
+            if let result = await service.generateCurrentWeekReflection(for: currentJournal) {
+                generatedReflection = result
+            } else {
+                reflectionError = "No entries this week yet, or generation failed."
+            }
         }
     }
 

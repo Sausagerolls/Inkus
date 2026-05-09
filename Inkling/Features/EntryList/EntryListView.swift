@@ -150,6 +150,9 @@ struct EntryListView: View {
         .onReceive(NotificationCenter.default.publisher(for: .inklingNewEntryRequested)) { _ in
             startNewEntry()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .inklingShowWeeklyReflectionRequested)) { _ in
+            handleReflectionTap()
+        }
         .sheet(item: $newDraft) { draft in
             NavigationStack {
                 EntryEditorView(

@@ -92,9 +92,34 @@ struct ReflectionService {
         guard AIAvailability.isAvailable else { return nil }
         let entries = entriesForLastWeek(journal: journal)
         guard entries.count >= 3 else { return nil }
+        return await generate(entries: entries, weekStart: Self.previousWeekStart(), journal: journal, replaceExisting: true)
+    }
+
+    /// Generates a reflection from the *current* in-progress week. Used by the
+    /// manual "Generate reflection now" button so the writer can test or read
+    /// before the week is over.
+    func generateCurrentWeekReflection(for journal: Journal?) async -> WeeklyReflection? {
+        guard AIAvailability.isAvailable else { return nil }
+        let cal = Self.calendar
+        let thisWeekStart = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: .now)) ?? .now
+        let thisWeekEnd = cal.date(byAdding: .day, value: 7, to: thisWeekStart) ?? .now
+        let entries = entriesInRange(thisWeekStart..<thisWeekEnd, journal: journal)
+        guard !entries.isEmpty else { return nil }
+        return await generate(entries: entries, weekStart: thisWeekStart, journal: journal, replaceExisting: true)
+    }
+
+    /// Internal — runs the generator and persists the reflection.
+    private func generate(
+        entries: [Entry],
+        weekStart: Date,
+        journal: Journal?,
+        replaceExisting: Bool
+    ) async -> WeeklyReflection? {
+        if replaceExisting, let existing = existingReflection(for: weekStart, journal: journal) {
+            context.delete(existing)
+        }
         do {
             let response = try await ReflectionGenerator().generate(entries: entries)
-            let weekStart = Self.previousWeekStart()
             let reflection = WeeklyReflection(
                 weekStartDate: weekStart,
                 summary: response.summary,
@@ -108,5 +133,26 @@ struct ReflectionService {
         } catch {
             return nil
         }
+    }
+
+    private func entriesInRange(_ range: Range<Date>, journal: Journal?) -> [Entry] {
+        let lo = range.lowerBound
+        let hi = range.upperBound
+        var descriptor: FetchDescriptor<Entry>
+        if let target = journal {
+            let journalID = target.id
+            descriptor = FetchDescriptor<Entry>(
+                predicate: #Predicate {
+                    $0.createdAt >= lo && $0.createdAt < hi && $0.journal?.id == journalID
+                },
+                sortBy: [SortDescriptor(\.createdAt)]
+            )
+        } else {
+            descriptor = FetchDescriptor<Entry>(
+                predicate: #Predicate { $0.createdAt >= lo && $0.createdAt < hi },
+                sortBy: [SortDescriptor(\.createdAt)]
+            )
+        }
+        return (try? context.fetch(descriptor)) ?? []
     }
 }

@@ -30,21 +30,33 @@ enum InklingPersistence {
         }
     }
 
-    /// Inserts a default "Personal" journal the first time the store is created.
+    /// Inserts default journals the first time the store is created.
+    /// Idempotent — checks existing names so re-runs after upgrades won't duplicate.
     @MainActor
     private static func seedIfNeeded(container: ModelContainer) {
         let context = container.mainContext
-        let descriptor = FetchDescriptor<Journal>()
-        let existing = (try? context.fetchCount(descriptor)) ?? 0
-        guard existing == 0 else { return }
+        let existingNames: Set<String> = {
+            let descriptor = FetchDescriptor<Journal>()
+            let journals = (try? context.fetch(descriptor)) ?? []
+            return Set(journals.map(\.name))
+        }()
 
-        let personal = Journal(
-            name: "Personal",
-            iconName: "book.closed",
-            accentColorHex: "#4F46E5",
-            sortOrder: 0
-        )
-        context.insert(personal)
-        try? context.save()
+        let defaults: [(name: String, icon: String, hex: String, order: Int)] = [
+            ("Personal", "book.closed", "#4F46E5", 0),  // indigo
+            ("Work",     "briefcase",   "#C05621", 1),  // terracotta
+            ("Travel",   "suitcase",    "#2F855A", 2),  // forest
+        ]
+
+        var inserted = false
+        for spec in defaults where !existingNames.contains(spec.name) {
+            context.insert(Journal(
+                name: spec.name,
+                iconName: spec.icon,
+                accentColorHex: spec.hex,
+                sortOrder: spec.order
+            ))
+            inserted = true
+        }
+        if inserted { try? context.save() }
     }
 }

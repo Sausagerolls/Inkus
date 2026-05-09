@@ -1,18 +1,15 @@
 import SwiftUI
+import SwiftData
 
 struct RootView: View {
     var body: some View {
-        VStack(spacing: 8) {
-            Text("Inkling")
-                .font(.system(.largeTitle, design: .serif))
-            Text("Phase 0 — placeholder")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        NavigationStack {
+            EntryListView()
         }
-        .padding()
     }
 }
 
 #Preview {
     RootView()
+        .modelContainer(InklingPersistence.makeContainer(inMemory: true))
 }

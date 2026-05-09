@@ -49,5 +49,18 @@ struct EntryRowView: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, Spacing.xs)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+    }
+
+    private var accessibilityLabel: String {
+        var parts: [String] = [timeString]
+        if let mood = entry.moodLabel { parts.append("mood \(mood)") }
+        parts.append(preview)
+        if !entry.photoFilenames.isEmpty {
+            parts.append("\(entry.photoFilenames.count) photo\(entry.photoFilenames.count == 1 ? "" : "s")")
+        }
+        if !entry.tags.isEmpty { parts.append("tags \(entry.tags.joined(separator: ", "))") }
+        return parts.joined(separator: ", ")
     }
 }

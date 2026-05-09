@@ -20,6 +20,7 @@ struct EntryListView: View {
     @State private var shouldOfferReflection: Bool = false
     @State private var isGeneratingReflection: Bool = false
     @State private var presentedReflection: WeeklyReflection?
+    @State private var reflectionReadyTrigger: Int = 0
 
     private var currentJournal: Journal? {
         if let match = journals.first(where: { $0.id.uuidString == currentJournalID }) {
@@ -107,6 +108,7 @@ struct EntryListView: View {
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
+        .sensoryFeedback(.success, trigger: reflectionReadyTrigger)
         .sheet(item: $newDraft) { draft in
             NavigationStack {
                 EntryEditorView(
@@ -171,6 +173,7 @@ struct EntryListView: View {
                 lastWeekReflection = result
                 shouldOfferReflection = false
                 presentedReflection = result
+                reflectionReadyTrigger += 1
             }
         }
     }

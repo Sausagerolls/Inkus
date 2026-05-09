@@ -20,6 +20,8 @@ struct EntryEditorView: View {
     @State private var isImporting = false
     @State private var pendingMood: MoodSuggestion?
     @State private var dismissedSuggestion = false
+    @State private var savedFeedbackTrigger: Int = 0
+    @State private var moodAcceptedTrigger: Int = 0
     @FocusState private var bodyFocused: Bool
 
     var body: some View {
@@ -54,6 +56,8 @@ struct EntryEditorView: View {
             guard !items.isEmpty else { return }
             importPickedPhotos(items)
         }
+        .sensoryFeedback(.success, trigger: savedFeedbackTrigger)
+        .sensoryFeedback(.selection, trigger: moodAcceptedTrigger)
     }
 
     // MARK: Subviews
@@ -223,6 +227,7 @@ struct EntryEditorView: View {
         try? modelContext.save()
         pendingMood = nil
         dismissedSuggestion = true
+        moodAcceptedTrigger += 1
     }
 
     private func persist() {
@@ -242,6 +247,8 @@ struct EntryEditorView: View {
             modelContext.delete(entry)
             try? modelContext.save()
             AttachmentStore.deleteAllAttachments(for: id)
+        } else {
+            savedFeedbackTrigger += 1
         }
         dismiss()
     }

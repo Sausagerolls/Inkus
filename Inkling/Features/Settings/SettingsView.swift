@@ -27,6 +27,7 @@ struct SettingsView: View {
                 notificationsSection
                 aiSection
                 privacySection
+                exportSection
                 aboutSection
             }
             .navigationTitle("Settings")
@@ -158,6 +159,16 @@ struct SettingsView: View {
                 CrisisResourcesView()
             } label: {
                 Label("Crisis resources", systemImage: "heart.text.square")
+            }
+        }
+    }
+
+    private var exportSection: some View {
+        Section("Export") {
+            NavigationLink {
+                ExportView()
+            } label: {
+                Label("Markdown / PDF", systemImage: "square.and.arrow.up")
             }
         }
     }

@@ -7,6 +7,8 @@ struct EntryDetailView: View {
     let entry: Entry
 
     @State private var isEditing = false
+    @State private var sharedURL: URL?
+    @State private var exportError: String?
 
     private let columns = [
         GridItem(.adaptive(minimum: 110), spacing: Spacing.s)
@@ -28,13 +30,46 @@ struct EntryDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Edit") { isEditing = true }
+                Menu {
+                    Button {
+                        share(asPDF: false)
+                    } label: {
+                        Label("Share Markdown", systemImage: "doc.text")
+                    }
+                    Button {
+                        share(asPDF: true)
+                    } label: {
+                        Label("Share PDF", systemImage: "doc.richtext")
+                    }
+                    Divider()
+                    Button("Edit") { isEditing = true }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                .accessibilityLabel("Entry actions")
             }
         }
         .sheet(isPresented: $isEditing) {
             NavigationStack {
                 EntryEditorView(entry: entry, isNewDraft: false)
             }
+        }
+        .sheet(item: Binding(
+            get: { sharedURL.map(EntryShare.init) },
+            set: { sharedURL = $0?.url }
+        )) { wrapper in
+            ShareSheet(items: [wrapper.url])
+        }
+    }
+
+    private func share(asPDF: Bool) {
+        do {
+            let url = asPDF
+                ? try ExportService.exportEntryPDF(entry)
+                : try ExportService.exportEntryMarkdown(entry)
+            sharedURL = url
+        } catch {
+            exportError = error.localizedDescription
         }
     }
 
@@ -80,6 +115,11 @@ struct EntryDetailView: View {
     private var tagChips: some View {
         FlowChips(tags: entry.tags)
     }
+}
+
+private struct EntryShare: Identifiable {
+    let url: URL
+    var id: String { url.absoluteString }
 }
 
 private struct FlowChips: View {

@@ -62,5 +62,13 @@ struct DailyPromptCard: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(accent.opacity(0.20), lineWidth: 1)
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityHint("Double tap to start writing from this prompt.")
+    }
+
+    private var accessibilityLabel: String {
+        let prefix = prompt.sourceIsAI ? "Today's prompt:" : "A prompt for today:"
+        return "\(prefix) \(prompt.promptText)"
     }
 }

@@ -157,19 +157,69 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("iCloud sync")
                         .font(.callout.weight(.medium))
-                    Text("Entries sync through your iCloud account.")
+                    Text(syncStatusDetail)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
+                Text(syncStatusBadge)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, Spacing.s)
+                    .padding(.vertical, Spacing.xs)
+                    .background(Capsule().fill(syncStatusBadgeBackground))
+                    .foregroundStyle(syncStatusBadgeForeground)
             }
-            Link(destination: URL(string: UIApplication.openSettingsURLString)!) {
-                Label("Open iOS Settings", systemImage: "arrow.up.right.square")
+            if case .localFallback(let reason) = InklingPersistence.activeBackingStore {
+                Text("CloudKit error: \(reason)")
+                    .font(.footnote)
+                    .foregroundStyle(.red)
             }
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                Text("To enable or disable sync:")
+                    .font(.footnote.weight(.medium))
+                Text("Settings → your name at the top → iCloud → See All → Inkling")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.vertical, Spacing.xs)
         } header: {
             Text("Sync")
         } footer: {
-            Text("Text entries, mood, and tags sync via your private iCloud database. Photos stay on this device for now (sync coming in a future update). Toggle iCloud Drive for Inkling in iOS Settings to enable or disable sync.")
+            Text("Text entries, mood, and tags sync via your private iCloud database. Photos stay on this device for now (sync coming in a future update). Inkling will only show in the iCloud apps list after you've written an entry while signed in to iCloud.")
+        }
+    }
+
+    private var syncStatusBadge: String {
+        switch InklingPersistence.activeBackingStore {
+        case .cloudKit:        return "On"
+        case .local:           return "Local"
+        case .localFallback:   return "Off"
+        case .inMemory:        return "Memory"
+        }
+    }
+
+    private var syncStatusDetail: String {
+        switch InklingPersistence.activeBackingStore {
+        case .cloudKit:        return "Active. Entries sync through your iCloud account."
+        case .local:           return "Local-only store."
+        case .localFallback:   return "CloudKit unavailable — using local storage."
+        case .inMemory:        return "In-memory (preview/test)."
+        }
+    }
+
+    private var syncStatusBadgeBackground: Color {
+        switch InklingPersistence.activeBackingStore {
+        case .cloudKit:      return Color.green.opacity(0.18)
+        case .localFallback: return Color.orange.opacity(0.18)
+        default:             return Color.inkSecondary
+        }
+    }
+
+    private var syncStatusBadgeForeground: Color {
+        switch InklingPersistence.activeBackingStore {
+        case .cloudKit:      return Color.green
+        case .localFallback: return Color.orange
+        default:             return Color.primary
         }
     }
 

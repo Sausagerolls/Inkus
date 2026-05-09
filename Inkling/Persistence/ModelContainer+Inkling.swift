@@ -20,24 +20,40 @@ enum InklingPersistence {
     /// on both the app and the widget extension target.
     static let appGroupID = "group.com.giantmushroom.Inkling"
 
+    /// Diagnostic — set during makeContainer() so the Settings UI can display
+    /// whether the active store is CloudKit-backed or fell back to local-only.
+    enum BackingStore: Equatable {
+        case cloudKit
+        case local
+        case localFallback(reason: String)
+        case inMemory
+    }
+    @MainActor static private(set) var activeBackingStore: BackingStore = .local
+
     /// Production container. Tries CloudKit + App Group first; falls back to a
     /// local-only store if entitlements aren't in place yet (so the app still
     /// runs during incremental Xcode setup).
     @MainActor
     static func makeContainer(inMemory: Bool = false) -> ModelContainer {
         if inMemory {
+            activeBackingStore = .inMemory
             return makeInMemory()
         }
 
-        if let cloud = try? makeCloudKit() {
+        do {
+            let cloud = try makeCloudKit()
             seedIfNeeded(container: cloud)
+            activeBackingStore = .cloudKit
+            logger.info("ModelContainer: CloudKit private DB active (\(cloudKitContainerID))")
             return cloud
+        } catch {
+            let reason = (error as NSError).localizedDescription
+            logger.warning("CloudKit container init failed (\(reason)) — falling back to local store. Check iCloud + App Group capabilities in Xcode.")
+            let local = makeLocal()
+            seedIfNeeded(container: local)
+            activeBackingStore = .localFallback(reason: reason)
+            return local
         }
-
-        logger.warning("CloudKit container init failed — falling back to local store. Check iCloud + App Group capabilities in Xcode.")
-        let local = makeLocal()
-        seedIfNeeded(container: local)
-        return local
     }
 
     // MARK: Variants

@@ -16,6 +16,16 @@ struct EntryListView: View {
     @State private var newDraft: Entry?
     @State private var draftPlaceholder: String? = nil
     @State private var todaysPrompt: DailyPrompt?
+    @AppStorage("entryViewMode") private var viewModeRaw: String = ViewMode.list.rawValue
+
+    private enum ViewMode: String, CaseIterable, Identifiable {
+        case list, calendar
+        var id: String { rawValue }
+        var symbol: String { self == .list ? "list.bullet" : "calendar" }
+    }
+    private var viewMode: ViewMode {
+        get { ViewMode(rawValue: viewModeRaw) ?? .list }
+    }
     @State private var lastWeekReflection: WeeklyReflection?
     @State private var shouldOfferReflection: Bool = false
     @State private var isGeneratingReflection: Bool = false
@@ -36,12 +46,32 @@ struct EntryListView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             if let journal = currentJournal {
-                JournalEntriesList(
-                    journal: journal,
-                    promptCard: { promptCardView },
-                    onDelete: delete,
-                    onRefresh: { await refreshPrompt() }
-                )
+                switch viewMode {
+                case .list:
+                    JournalEntriesList(
+                        journal: journal,
+                        promptCard: { promptCardView },
+                        onDelete: delete,
+                        onRefresh: { await refreshPrompt() }
+                    )
+                case .calendar:
+                    ScrollView {
+                        VStack(spacing: Spacing.m) {
+                            promptCardView
+                                .padding(.horizontal, Spacing.m)
+                            CalendarMonthView(
+                                journal: journal,
+                                accent: accent,
+                                onSelectDate: { _ in }
+                            )
+                            Spacer(minLength: 80)
+                        }
+                        .padding(.top, Spacing.s)
+                    }
+                    .navigationDestination(for: Entry.self) { entry in
+                        EntryDetailView(entry: entry)
+                    }
+                }
             } else {
                 EmptyStateView(
                     symbol: "book.closed",
@@ -70,6 +100,14 @@ struct EntryListView: View {
                     }
                 }
                 .accessibilityLabel("Switch journal")
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModeRaw = (viewMode == .list ? ViewMode.calendar : ViewMode.list).rawValue
+                } label: {
+                    Image(systemName: viewMode == .list ? "calendar" : "list.bullet")
+                }
+                .accessibilityLabel(viewMode == .list ? "Switch to calendar view" : "Switch to list view")
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -344,10 +382,23 @@ private struct JournalEntriesList<PromptCard: View>: View {
                             }
                         }
                     } header: {
-                        Text(dayHeader(for: group.date))
-                            .font(.callout.weight(.medium))
-                            .foregroundStyle(.secondary)
-                            .textCase(nil)
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(dayHeader(for: group.date))
+                                .font(.system(.title3, design: .serif).weight(.semibold))
+                                .foregroundStyle(.primary)
+                            Text("·")
+                                .foregroundStyle(.tertiary)
+                            Text(group.date.formatted(.dateTime.month(.abbreviated).day()))
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text("\(group.entries.count) \(group.entries.count == 1 ? "entry" : "entries")")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                                .monospacedDigit()
+                        }
+                        .padding(.vertical, Spacing.xs)
+                        .textCase(nil)
                     }
                 }
             }

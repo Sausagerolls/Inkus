@@ -13,6 +13,12 @@ struct EntryListView: View {
     @State private var showingNewJournal = false
     @State private var showingSearch = false
     @State private var newDraft: Entry?
+    @State private var draftPlaceholder: String? = nil
+    @State private var todaysPrompt: DailyPrompt?
+    @State private var lastWeekReflection: WeeklyReflection?
+    @State private var shouldOfferReflection: Bool = false
+    @State private var isGeneratingReflection: Bool = false
+    @State private var presentedReflection: WeeklyReflection?
 
     private var currentJournal: Journal? {
         if let match = journals.first(where: { $0.id.uuidString == currentJournalID }) {
@@ -21,10 +27,19 @@ struct EntryListView: View {
         return journals.first
     }
 
+    private var accent: Color {
+        currentJournal.map { Color(hex: $0.accentColorHex) } ?? Color.inkAccent
+    }
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             if let journal = currentJournal {
-                JournalEntriesList(journal: journal, onDelete: delete)
+                JournalEntriesList(
+                    journal: journal,
+                    promptCard: { promptCardView },
+                    onDelete: delete,
+                    onRefresh: { await refreshPrompt() }
+                )
             } else {
                 EmptyStateView(
                     symbol: "book.closed",
@@ -82,12 +97,68 @@ struct EntryListView: View {
         }
         .sheet(item: $newDraft) { draft in
             NavigationStack {
-                EntryEditorView(entry: draft, isNewDraft: true)
+                EntryEditorView(
+                    entry: draft,
+                    isNewDraft: true,
+                    placeholderOverride: draftPlaceholder
+                )
             }
         }
-        .onAppear {
+        .sheet(item: $presentedReflection) { reflection in
+            NavigationStack {
+                WeeklyReflectionView(reflection: reflection)
+            }
+        }
+        .task {
             if currentJournalID.isEmpty, let first = journals.first {
                 currentJournalID = first.id.uuidString
+            }
+            await loadPromptIfNeeded()
+            evaluateReflectionState()
+        }
+        .onChange(of: currentJournalID) { _, _ in
+            evaluateReflectionState()
+        }
+    }
+
+    @ViewBuilder
+    private var promptCardView: some View {
+        VStack(spacing: Spacing.s) {
+            if shouldOfferReflection || lastWeekReflection != nil || isGeneratingReflection {
+                WeeklyReflectionBanner(
+                    state: bannerState,
+                    accent: accent,
+                    action: handleReflectionTap
+                )
+            }
+            if let prompt = todaysPrompt {
+                DailyPromptCard(prompt: prompt, accent: accent) {
+                    startEntryFromPrompt(prompt)
+                }
+            }
+        }
+    }
+
+    private var bannerState: WeeklyReflectionBanner.State {
+        if isGeneratingReflection { return .generating }
+        if lastWeekReflection != nil { return .viewExisting }
+        return .offerGenerate
+    }
+
+    private func handleReflectionTap() {
+        if let existing = lastWeekReflection {
+            presentedReflection = existing
+            return
+        }
+        guard let journal = currentJournal else { return }
+        isGeneratingReflection = true
+        Task { @MainActor in
+            defer { isGeneratingReflection = false }
+            let service = ReflectionService(context: modelContext)
+            if let result = await service.generatePreviousWeekReflection(for: journal) {
+                lastWeekReflection = result
+                shouldOfferReflection = false
+                presentedReflection = result
             }
         }
     }
@@ -100,9 +171,7 @@ struct EntryListView: View {
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(.white)
                 .frame(width: 56, height: 56)
-                .background(
-                    Circle().fill(currentJournal.map { Color(hex: $0.accentColorHex) } ?? Color.inkAccent)
-                )
+                .background(Circle().fill(accent))
                 .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
         }
         .accessibilityLabel("New entry")
@@ -113,6 +182,18 @@ struct EntryListView: View {
         guard let journal = currentJournal else { return }
         let draft = Entry(body: "", journal: journal)
         modelContext.insert(draft)
+        draftPlaceholder = nil
+        newDraft = draft
+    }
+
+    private func startEntryFromPrompt(_ prompt: DailyPrompt) {
+        guard let journal = currentJournal else { return }
+        let draft = Entry(body: "", journal: journal)
+        draft.sourcePromptID = prompt.id
+        modelContext.insert(draft)
+        prompt.wasUsed = true
+        try? modelContext.save()
+        draftPlaceholder = prompt.promptText
         newDraft = draft
     }
 
@@ -122,19 +203,48 @@ struct EntryListView: View {
         try? modelContext.save()
         AttachmentStore.deleteAllAttachments(for: id)
     }
+
+    private func loadPromptIfNeeded() async {
+        guard todaysPrompt == nil else { return }
+        let service = DailyPromptService(context: modelContext)
+        todaysPrompt = await service.todaysPrompt()
+    }
+
+    private func refreshPrompt() async {
+        let service = DailyPromptService(context: modelContext)
+        todaysPrompt = await service.regenerate()
+    }
+
+    private func evaluateReflectionState() {
+        let service = ReflectionService(context: modelContext)
+        let weekStart = ReflectionService.previousWeekStart()
+        lastWeekReflection = service.existingReflection(for: weekStart, journal: currentJournal)
+        shouldOfferReflection = (lastWeekReflection == nil) &&
+            service.shouldOfferPreviousWeekReflection(for: currentJournal) &&
+            AIAvailability.isAvailable
+    }
 }
 
 /// Inner view scoped to a single journal — re-runs @Query when the journal changes
 /// because the parent re-creates this view by id.
-private struct JournalEntriesList: View {
+private struct JournalEntriesList<PromptCard: View>: View {
     let journal: Journal
+    @ViewBuilder let promptCard: PromptCard
     let onDelete: (Entry) -> Void
+    let onRefresh: () async -> Void
 
     @Query private var entries: [Entry]
 
-    init(journal: Journal, onDelete: @escaping (Entry) -> Void) {
+    init(
+        journal: Journal,
+        @ViewBuilder promptCard: () -> PromptCard,
+        onDelete: @escaping (Entry) -> Void,
+        onRefresh: @escaping () async -> Void
+    ) {
         self.journal = journal
+        self.promptCard = promptCard()
         self.onDelete = onDelete
+        self.onRefresh = onRefresh
         let journalID = journal.id
         _entries = Query(
             filter: #Predicate<Entry> { entry in
@@ -155,14 +265,27 @@ private struct JournalEntriesList: View {
     }
 
     var body: some View {
-        if entries.isEmpty {
-            EmptyStateView(
-                symbol: journal.iconName,
-                title: "No entries in \(journal.name) yet",
-                message: "Tap the + button to start writing."
-            )
-        } else {
-            List {
+        List {
+            Section {
+                promptCard
+                    .listRowInsets(EdgeInsets(top: Spacing.s, leading: Spacing.m,
+                                              bottom: Spacing.s, trailing: Spacing.m))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            }
+
+            if entries.isEmpty {
+                Section {
+                    EmptyStateView(
+                        symbol: journal.iconName,
+                        title: "No entries in \(journal.name) yet",
+                        message: "Tap the + button to start writing."
+                    )
+                    .frame(minHeight: 280)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                }
+            } else {
                 ForEach(groupedByDay, id: \.date) { group in
                     Section {
                         ForEach(group.entries) { entry in
@@ -192,10 +315,11 @@ private struct JournalEntriesList: View {
                     }
                 }
             }
-            .listStyle(.plain)
-            .navigationDestination(for: Entry.self) { entry in
-                EntryDetailView(entry: entry)
-            }
+        }
+        .listStyle(.plain)
+        .refreshable { await onRefresh() }
+        .navigationDestination(for: Entry.self) { entry in
+            EntryDetailView(entry: entry)
         }
     }
 

@@ -10,16 +10,24 @@ struct EntryEditorView: View {
     /// True when this entry was just inserted by the list view as a draft.
     /// On cancel/dismiss with empty body, we delete the draft so it doesn't pollute the list.
     let isNewDraft: Bool
+    /// When set, replaces the default "Start writing…" placeholder.
+    var placeholderOverride: String? = nil
 
     @State private var draftBody: String = ""
     @State private var saveTask: Task<Void, Never>?
+    @State private var moodSuggestionTask: Task<Void, Never>?
     @State private var pickerItems: [PhotosPickerItem] = []
     @State private var isImporting = false
+    @State private var pendingMood: MoodSuggestion?
+    @State private var dismissedSuggestion = false
     @FocusState private var bodyFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
             editor
+            if let suggestion = pendingMood, !dismissedSuggestion {
+                moodPill(suggestion)
+            }
             Divider()
             toolbar
         }
@@ -40,12 +48,12 @@ struct EntryEditorView: View {
         }
         .onChange(of: draftBody) { _, _ in
             scheduleSave()
+            scheduleMoodSuggestion()
         }
         .onChange(of: pickerItems) { _, items in
             guard !items.isEmpty else { return }
             importPickedPhotos(items)
         }
-        .interactiveDismissDisabled(false)
     }
 
     // MARK: Subviews
@@ -53,7 +61,7 @@ struct EntryEditorView: View {
     private var editor: some View {
         ZStack(alignment: .topLeading) {
             if draftBody.isEmpty {
-                Text("Start writing…")
+                Text(placeholderOverride ?? "Start writing…")
                     .font(.system(.body, design: .serif))
                     .foregroundStyle(.tertiary)
                     .padding(.horizontal, Spacing.m + 4)
@@ -128,6 +136,40 @@ struct EntryEditorView: View {
         .background(.regularMaterial)
     }
 
+    private func moodPill(_ suggestion: MoodSuggestion) -> some View {
+        HStack(spacing: Spacing.s) {
+            Image(systemName: "sparkles")
+                .font(.caption)
+                .foregroundStyle(Color.inkAccent)
+            Text("Suggested:")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text("\(suggestion.emoji) \(suggestion.mood)")
+                .font(.callout.weight(.medium))
+            Spacer(minLength: 0)
+            Button("Accept") {
+                acceptMood(suggestion)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.small)
+            .tint(Color.inkAccent)
+            Button {
+                dismissedSuggestion = true
+                pendingMood = nil
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.caption)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+        }
+        .padding(.horizontal, Spacing.m)
+        .padding(.vertical, Spacing.s)
+        .background(Color.inkSecondary)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .animation(.smooth, value: pendingMood?.mood)
+    }
+
     private var navTitle: String {
         entry.createdAt.formatted(.dateTime.weekday(.wide).month().day())
     }
@@ -143,6 +185,46 @@ struct EntryEditorView: View {
         }
     }
 
+    private func scheduleMoodSuggestion() {
+        guard AIAvailability.isAvailable,
+              entry.moodLabel == nil,
+              !dismissedSuggestion else { return }
+        moodSuggestionTask?.cancel()
+        let snapshotBody = draftBody
+        guard snapshotBody.trimmingCharacters(in: .whitespacesAndNewlines).count >= 60 else {
+            // Too short to be useful — wait until there's more.
+            pendingMood = nil
+            return
+        }
+        moodSuggestionTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(4))
+            guard !Task.isCancelled else { return }
+            guard entry.moodLabel == nil, !dismissedSuggestion else { return }
+            do {
+                let suggestion = try await MoodSuggester().suggest(for: snapshotBody)
+                guard !Task.isCancelled, entry.moodLabel == nil, !dismissedSuggestion else { return }
+                pendingMood = suggestion
+            } catch {
+                // Silent failure — suggestion is non-essential.
+            }
+        }
+    }
+
+    private func acceptMood(_ suggestion: MoodSuggestion) {
+        entry.moodLabel = suggestion.mood
+        entry.moodEmoji = suggestion.emoji
+        entry.moodConfidence = 1.0
+        // Merge tag suggestions without duplicates.
+        let existing = Set(entry.tags)
+        for tag in suggestion.tags where !existing.contains(tag) {
+            entry.tags.append(tag)
+        }
+        entry.updatedAt = .now
+        try? modelContext.save()
+        pendingMood = nil
+        dismissedSuggestion = true
+    }
+
     private func persist() {
         guard entry.body != draftBody else { return }
         entry.body = draftBody
@@ -152,10 +234,10 @@ struct EntryEditorView: View {
 
     private func done() {
         saveTask?.cancel()
+        moodSuggestionTask?.cancel()
         persist()
         if isNewDraft && draftBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && entry.photoFilenames.isEmpty {
-            // Don't keep an empty draft.
             let id = entry.id
             modelContext.delete(entry)
             try? modelContext.save()
@@ -166,6 +248,7 @@ struct EntryEditorView: View {
 
     private func cancel() {
         saveTask?.cancel()
+        moodSuggestionTask?.cancel()
         if isNewDraft && draftBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && entry.photoFilenames.isEmpty {
             let id = entry.id

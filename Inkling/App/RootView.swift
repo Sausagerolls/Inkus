@@ -2,9 +2,15 @@ import SwiftUI
 import SwiftData
 
 struct RootView: View {
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+
     var body: some View {
-        NavigationStack {
-            EntryListView()
+        if hasCompletedOnboarding {
+            NavigationStack {
+                EntryListView()
+            }
+        } else {
+            OnboardingView()
         }
     }
 }

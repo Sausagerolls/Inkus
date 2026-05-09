@@ -12,6 +12,7 @@ struct EntryListView: View {
     @State private var showingSwitcher = false
     @State private var showingNewJournal = false
     @State private var showingSearch = false
+    @State private var showingSettings = false
     @State private var newDraft: Entry?
     @State private var draftPlaceholder: String? = nil
     @State private var todaysPrompt: DailyPrompt?
@@ -77,6 +78,14 @@ struct EntryListView: View {
                 }
                 .accessibilityLabel("Search")
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showingSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+                .accessibilityLabel("Settings")
+            }
         }
         .sheet(isPresented: $showingSwitcher) {
             JournalSwitcherView(
@@ -94,6 +103,9 @@ struct EntryListView: View {
             NavigationStack {
                 SearchView(initialJournal: currentJournal)
             }
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
         }
         .sheet(item: $newDraft) { draft in
             NavigationStack {

@@ -45,7 +45,7 @@ struct NotificationScheduler {
 
         let content = UNMutableNotificationContent()
         content.title = "Your week in review is ready"
-        content.body  = "Open Inkling to read this week's reflection."
+        content.body  = "Open Inkus to read this week's reflection."
         content.sound = .default
 
         var components = DateComponents()

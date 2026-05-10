@@ -1,13 +1,13 @@
 import Foundation
 
-/// Google Drive v3 sync. Stores files inside an "Inkling" folder created by
-/// the app under the user's Drive root. Scope is `drive.file` so Inkling can
+/// Google Drive v3 sync. Stores files inside an "Inkus" folder created by
+/// the app under the user's Drive root. Scope is `drive.file` so Inkus can
 /// only see what it created — never the user's wider Drive.
 actor GoogleDriveProvider: SyncProvider {
     let kind: SyncProviderKind = .googleDrive
 
     private let session: URLSession
-    private let folderName = "Inkling"
+    private let folderName = "Inkus"
     private var cachedFolderID: String?
 
     init(session: URLSession = .shared) {

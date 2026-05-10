@@ -294,7 +294,7 @@ struct SettingsView: View {
         } header: {
             Text("Identity")
         } footer: {
-            Text("Optional. Inkling has no account — signing in only stores your name and email locally so the app can greet you and stamp your name on exports.")
+            Text("Optional. Inkus has no account — signing in only stores your name and email locally so the app can greet you and stamp your name on exports.")
         }
     }
 

@@ -25,7 +25,7 @@ struct SyncProviderSettingsView: View {
             } header: {
                 Text("Cloud provider")
             } footer: {
-                Text("Sync is opt-in. Inkling never holds your data — pick the provider you trust, or pick \"No sync\" and keep everything on this device.")
+                Text("Sync is opt-in. Inkus never holds your data — pick the provider you trust, or pick \"No sync\" and keep everything on this device.")
             }
 
             switch store.selectedKind {
@@ -90,7 +90,7 @@ struct SyncProviderSettingsView: View {
                     )
                     .foregroundStyle(InklingPersistence.activeBackingStore == .cloudKit ? Color.green : Color.orange)
             }
-            Text("iCloud sync is system-managed. Toggle Inkling under Settings → [Your Name] → iCloud → See All → Inkling.")
+            Text("iCloud sync is system-managed. Toggle Inkus under Settings → [Your Name] → iCloud → See All → Inkus.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         } header: {
@@ -125,7 +125,7 @@ struct SyncProviderSettingsView: View {
         } header: {
             Text("Nextcloud")
         } footer: {
-            Text("Generate an app password in Nextcloud under Settings → Security → \"Generate app password.\" Inkling stores it in the iOS Keychain. Files sync to a folder named \"Inkling\" in your account home.")
+            Text("Generate an app password in Nextcloud under Settings → Security → \"Generate app password.\" Inkus stores it in the iOS Keychain. Files sync to a folder named \"Inkus\" in your account home.")
         }
     }
 
@@ -177,7 +177,7 @@ struct SyncProviderSettingsView: View {
                 Text("Set INKLING_DROPBOX_APP_KEY in the build before signing in. See README for the setup walkthrough.")
                     .foregroundStyle(.orange)
             } else {
-                Text("Files sync to /Inkling in your Dropbox. Inkling only sees files inside that folder.")
+                Text("Files sync to /Inkus in your Dropbox. Inkus only sees files inside that folder.")
             }
         }
     }
@@ -230,7 +230,7 @@ struct SyncProviderSettingsView: View {
                 Text("Set INKLING_GOOGLE_CLIENT_ID in the build before signing in. See README for the setup walkthrough.")
                     .foregroundStyle(.orange)
             } else {
-                Text("Inkling uses the drive.file scope — it can only read and write files it created itself, never your wider Drive.")
+                Text("Inkus uses the drive.file scope — it can only read and write files it created itself, never your wider Drive.")
             }
         }
     }

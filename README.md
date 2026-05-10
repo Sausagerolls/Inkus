@@ -1,4 +1,4 @@
-# Inkling
+# Inkus
 
 > The AI journal that stays put.
 
@@ -29,7 +29,7 @@ The shipped app: [giantmushroom.studio/inkling](https://giantmushroom.studio/ink
 ## Architecture (high-level)
 
 ```
-Inkling/
+Inkus/
 ├── App/                         # @main entry, RootView, scene commands
 ├── Features/                    # SwiftUI views, one folder per feature
 │   ├── EntryList/               # main list, daily-prompt card, calendar view
@@ -69,10 +69,10 @@ Both providers use PKCE OAuth — no client secret in the app. You only need to 
 
 **Dropbox**
 
-1. Sign in to <https://www.dropbox.com/developers/apps> → **Create app** → "Scoped access" → "Full Dropbox" → name "Inkling"
+1. Sign in to <https://www.dropbox.com/developers/apps> → **Create app** → "Scoped access" → "Full Dropbox" → name "Inkus"
 2. On the **Settings** tab, copy the **App key** and add an OAuth 2 redirect URI: `inkling://oauth-callback/dropbox`
 3. On the **Permissions** tab, enable: `files.content.write`, `files.content.read`, `files.metadata.read`, `files.metadata.write`, `account_info.read`
-4. In Xcode, select the Inkling target → Build Settings → search for `INKLING_DROPBOX_APP_KEY` → paste the app key
+4. In Xcode, select the Inkling target (named Inkus on the home screen) → Build Settings → search for `INKLING_DROPBOX_APP_KEY` → paste the app key
 5. Rebuild
 
 **Google Drive**
@@ -80,7 +80,7 @@ Both providers use PKCE OAuth — no client secret in the app. You only need to 
 1. Sign in to <https://console.cloud.google.com/apis/credentials> → **Create Credentials** → **OAuth client ID** → application type **iOS**
 2. Bundle ID: `com.giantmushroom.Inkling` (or whatever you changed it to)
 3. Copy the **Client ID** (looks like `123456789-abc.apps.googleusercontent.com`)
-4. In Xcode, Inkling target → Build Settings:
+4. In Xcode, Inkling target (named Inkus on the home screen) → Build Settings:
    - `INKLING_GOOGLE_CLIENT_ID` = the full client ID
    - `INKLING_GOOGLE_REVERSE_CLIENT_ID` = the same value reversed, e.g. `com.googleusercontent.apps.123456789-abc`
 5. Enable the Google Drive API for your project at <https://console.cloud.google.com/apis/library/drive.googleapis.com>

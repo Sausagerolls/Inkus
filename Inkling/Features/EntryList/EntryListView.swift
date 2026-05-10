@@ -82,7 +82,7 @@ struct EntryListView: View {
             newEntryButton
                 .padding(Spacing.l)
         }
-        .navigationTitle(currentJournal?.name ?? "Inkling")
+        .navigationTitle(currentJournal?.name ?? "Inkus")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {

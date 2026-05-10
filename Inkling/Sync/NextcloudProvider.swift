@@ -1,7 +1,7 @@
 import Foundation
 
 /// Nextcloud sync over WebDAV. Stores everything under
-/// `<server>/remote.php/dav/files/<username>/Inkling/` using HTTP Basic auth
+/// `<server>/remote.php/dav/files/<username>/Inkus/` using HTTP Basic auth
 /// with an app password (Settings → Security → "Generate app password" in
 /// Nextcloud).
 ///
@@ -14,7 +14,7 @@ struct NextcloudCredentials: Codable, Equatable, Sendable {
     var appPassword: String // Nextcloud app password, NOT the account password
 
     /// The base directory we sync to/from. Always under the user's home.
-    var rootFolder: String { "Inkling" }
+    var rootFolder: String { "Inkus" }
 }
 
 actor NextcloudProvider: SyncProvider {
@@ -115,7 +115,7 @@ actor NextcloudProvider: SyncProvider {
             .data(using: .utf8)!
             .base64EncodedString()
         req.setValue("Basic \(basic)", forHTTPHeaderField: "Authorization")
-        req.setValue("Inkling/1.0 (iOS)", forHTTPHeaderField: "User-Agent")
+        req.setValue("Inkus/1.2 (iOS)", forHTTPHeaderField: "User-Agent")
         return req
     }
 

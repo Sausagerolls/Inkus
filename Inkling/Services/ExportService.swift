@@ -70,7 +70,7 @@ enum ExportService {
     private static func tempURL(filename: String) -> URL {
         FileManager.default
             .temporaryDirectory
-            .appendingPathComponent("Inkling-Export-\(UUID().uuidString.prefix(8))", isDirectory: true)
+            .appendingPathComponent("Inkus-Export-\(UUID().uuidString.prefix(8))", isDirectory: true)
             .appendingPathComponent(filename)
     }
 
@@ -153,7 +153,7 @@ enum ExportService {
         let allowed = CharacterSet.alphanumerics.union(.init(charactersIn: "-_ "))
         let cleaned = trimmed.unicodeScalars.map { allowed.contains($0) ? Character($0) : "_" }
         let result = String(cleaned).replacingOccurrences(of: " ", with: "_")
-        return result.isEmpty ? "Inkling-export" : result
+        return result.isEmpty ? "Inkus-export" : result
     }
 }
 
@@ -191,7 +191,7 @@ struct ExportEntryPDFView: View {
             }
 
             Spacer(minLength: 0)
-            Text("Exported from Inkling — \(Date.now.formatted(.dateTime.month().day().year()))")
+            Text("Exported from Inkus — \(Date.now.formatted(.dateTime.month().day().year()))")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
@@ -237,7 +237,7 @@ struct ExportJournalPDFView: View {
             }
 
             Spacer(minLength: 0)
-            Text("Exported from Inkling — kept on device.")
+            Text("Exported from Inkus — kept on device.")
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }

@@ -1,6 +1,6 @@
 import Foundation
 
-/// Explicit "no sync" provider. Selecting this means Inkling reads and writes
+/// Explicit "no sync" provider. Selecting this means Inkus reads and writes
 /// only from the on-device SwiftData store. CloudKit container is still
 /// configured at the SwiftData level (so opting back in to iCloud later is
 /// frictionless), but no third-party network calls are made for sync.

@@ -37,7 +37,7 @@ enum OAuthConfig {
             let parts = id.split(separator: ".").reversed().joined(separator: ".")
             return "\(parts):/oauth-callback/google"
         }
-        /// drive.file — per-app sandbox; Inkling can only see files it created
+        /// drive.file — per-app sandbox; Inkus can only see files it created
         /// itself, never the user's wider Drive. Best-practice scope.
         static let scopes: [String] = ["https://www.googleapis.com/auth/drive.file", "openid", "email"]
     }

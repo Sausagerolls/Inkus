@@ -1,12 +1,12 @@
 import AppIntents
 import SwiftUI
 
-/// "New entry in Inkling" — exposed to Shortcuts, Spotlight, and the medium widget's
+/// "New entry in Inkus" — exposed to Shortcuts, Spotlight, and the medium widget's
 /// Start writing button. Opens the app and signals the main UI to present a fresh draft.
 struct NewEntryIntent: AppIntent {
     static let title: LocalizedStringResource = "New entry"
     static let description: IntentDescription = IntentDescription(
-        "Open Inkling and start a new journal entry."
+        "Open Inkus and start a new journal entry."
     )
     static let openAppWhenRun: Bool = true
 

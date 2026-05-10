@@ -47,9 +47,9 @@ struct AppleSignInSettingsView: View {
                 Text("Sign in with Apple")
             } footer: {
                 if service.isSignedIn {
-                    Text("To revoke access entirely, open iOS Settings → your name → Sign in with Apple → Inkling → Stop using Apple ID.")
+                    Text("To revoke access entirely, open iOS Settings → your name → Sign in with Apple → Inkus → Stop using Apple ID.")
                 } else {
-                    Text("Optional. Inkling has no account system. Signing in only stores your name and email on this device — used to greet you and stamp exports. Nothing is sent to a server.")
+                    Text("Optional. Inkus has no account system. Signing in only stores your name and email on this device — used to greet you and stamp exports. Nothing is sent to a server.")
                 }
             }
 

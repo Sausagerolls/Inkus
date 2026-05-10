@@ -2,7 +2,7 @@
 
 Copyright © 2026 Giant Mushroom Studio. All rights reserved.
 
-This source code is **published for transparency**, so anyone curious about how Inkling works on their device can read it end-to-end. Publication of this code does **not** grant a licence under copyright, patent, trademark, or any other intellectual-property right.
+This source code is **published for transparency**, so anyone curious about how Inkus works on their device can read it end-to-end. Publication of this code does **not** grant a licence under copyright, patent, trademark, or any other intellectual-property right.
 
 ## What you may do
 
@@ -16,7 +16,7 @@ This source code is **published for transparency**, so anyone curious about how 
 - Redistribute the code, in whole or in part, in source or binary form.
 - Publish a fork as your own product, app, or service.
 - Ship a derivative work — including, but not limited to, a renamed copy, a re-skinned version, a translated version, or a port to another platform.
-- Use the **"Inkling"** name, **"Giant Mushroom"** name, the app icon, the wordmark, or any other Giant Mushroom Studio trademark in your own materials.
+- Use the **"Inkus"** name, **"Giant Mushroom"** name, the app icon, the wordmark, or any other Giant Mushroom Studio trademark in your own materials.
 
 ## Asking permission
 

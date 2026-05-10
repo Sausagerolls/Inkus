@@ -32,6 +32,6 @@ extension Notification.Name {
     static let inklingShowWeeklyReflectionRequested = Notification.Name("co.giantmushroom.inkling.showWeeklyReflectionRequested")
     /// Posted by the macOS menu bar (Edit → Find / ⌘F).
     static let inklingShowSearchRequested = Notification.Name("co.giantmushroom.inkling.showSearchRequested")
-    /// Posted by the macOS menu bar (Inkling → Settings… / ⌘,).
+    /// Posted by the macOS menu bar (Inkus → Settings… / ⌘,).
     static let inklingShowSettingsRequested = Notification.Name("co.giantmushroom.inkling.showSettingsRequested")
 }

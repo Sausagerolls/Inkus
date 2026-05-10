@@ -48,7 +48,7 @@ struct OnboardingView: View {
     private var welcomePage: some View {
         OnboardingPage(
             symbol: "sparkles",
-            title: "Welcome to Inkling",
+            title: "Welcome to Inkus",
             subtitle: "A quiet space for daily writing.",
             bodyText: "Each morning, a gentle prompt to help you start. Each Sunday, a reflection on your week. All written by you, kept on your phone."
         )
@@ -100,7 +100,7 @@ struct OnboardingView: View {
     private var notificationDetail: String {
         switch notificationStatus {
         case .authorized, .provisional: return "Sunday at 7pm. You can change the time in Settings."
-        case .denied:                   return "Currently off. Enable from iOS Settings → Inkling → Notifications."
+        case .denied:                   return "Currently off. Enable from iOS Settings → Inkus → Notifications."
         case .ephemeral, .notDetermined:return "We'll ping you Sunday at 7pm with your week's reflection."
         }
     }
@@ -120,7 +120,7 @@ struct OnboardingView: View {
             title: "Apple Intelligence",
             detail: isAvailable
                 ? "Detected. Daily prompts and weekly reflections will be tailored on-device."
-                : (AIAvailability.unavailableReason ?? "Not available — Inkling will use a curated prompt bank."),
+                : (AIAvailability.unavailableReason ?? "Not available — Inkus will use a curated prompt bank."),
             actionLabel: isAvailable ? "Ready" : "Off",
             isPrimary: false,
             action: { /* informational */ }

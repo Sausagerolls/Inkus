@@ -81,7 +81,7 @@ enum AttachmentStore {
     // MARK: Migration from legacy on-disk attachments
 
     /// Walks every Entry, finds rows that still carry legacy `photoFilenames`
-    /// pointing at on-disk JPEGs in `Application Support/Inkling/attachments/`,
+    /// pointing at on-disk JPEGs in `Application Support/Inkus/attachments/`,
     /// imports them as Attachment rows, and clears the legacy arrays.
     /// Idempotent — safe to call on every launch.
     ///
@@ -125,7 +125,7 @@ enum AttachmentStore {
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)
             .first ?? URL(filePath: NSTemporaryDirectory())
         return base
-            .appendingPathComponent("Inkling", isDirectory: true)
+            .appendingPathComponent("Inkus", isDirectory: true)
             .appendingPathComponent("attachments", isDirectory: true)
     }
 

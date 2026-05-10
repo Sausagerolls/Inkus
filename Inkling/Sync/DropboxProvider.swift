@@ -1,12 +1,12 @@
 import Foundation
 
-/// Dropbox v2 sync. Files live under `/Inkling` in the user's Dropbox.
+/// Dropbox v2 sync. Files live under `/Inkus` in the user's Dropbox.
 /// Auth is PKCE OAuth via OAuthHelper. Tokens persist in the iOS Keychain.
 actor DropboxProvider: SyncProvider {
     let kind: SyncProviderKind = .dropbox
 
     private let session: URLSession
-    private let rootFolder = "/Inkling"
+    private let rootFolder = "/Inkus"
 
     init(session: URLSession = .shared) {
         self.session = session

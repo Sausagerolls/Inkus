@@ -30,7 +30,7 @@ struct CrisisResourcesView: View {
                     webURL: URL(string: "https://findahelpline.com")
                 )
 
-                Text("Inkling is not a substitute for talking to a person. If you're in crisis or worried about yourself or someone else, please reach out.")
+                Text("Inkus is not a substitute for talking to a person. If you're in crisis or worried about yourself or someone else, please reach out.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .padding(.top, Spacing.m)

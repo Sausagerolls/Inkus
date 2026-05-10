@@ -4,7 +4,7 @@ import Security
 import Observation
 import UIKit
 
-/// Token Sign-in-with-Apple. We do not have an Inkling account; this service
+/// Token Sign-in-with-Apple. We do not have an Inkus account; this service
 /// only persists the user's name + email locally so the app can greet them
 /// and stamp export filenames. The Apple user identifier lives in the
 /// Keychain so we can detect the same Apple ID across reinstalls; the
@@ -72,7 +72,7 @@ final class AppleSignInService: NSObject {
     }
 
     /// Polls Apple for the credential's current state on launch. If the user
-    /// has revoked authorisation in iOS Settings → Sign in with Apple → Inkling,
+    /// has revoked authorisation in iOS Settings → Sign in with Apple → Inkus,
     /// we sign out locally too.
     func refreshCredentialState() async {
         guard let userIdentifier else { return }

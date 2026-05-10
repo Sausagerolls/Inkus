@@ -17,5 +17,5 @@ struct RootView: View {
 
 #Preview {
     RootView()
-        .modelContainer(InklingPersistence.makeContainer(inMemory: true))
+        .modelContainer(InkusPersistence.makeContainer(inMemory: true))
 }

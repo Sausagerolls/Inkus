@@ -8,7 +8,7 @@ struct ICloudProvider: SyncProvider {
 
     func validateConfiguration() async throws {
         // The model container's CloudKit reachability is surfaced via
-        // InklingPersistence.activeBackingStore — Settings reads that
+        // InkusPersistence.activeBackingStore — Settings reads that
         // directly. Nothing to ping here.
     }
 

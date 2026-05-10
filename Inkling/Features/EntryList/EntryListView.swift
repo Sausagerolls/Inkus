@@ -439,5 +439,5 @@ private struct JournalEntriesList<PromptCard: View>: View {
     NavigationStack {
         EntryListView()
     }
-    .modelContainer(InklingPersistence.makeContainer(inMemory: true))
+    .modelContainer(InkusPersistence.makeContainer(inMemory: true))
 }

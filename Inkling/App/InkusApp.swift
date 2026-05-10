@@ -3,8 +3,8 @@ import SwiftData
 import UserNotifications
 
 @main
-struct InklingApp: App {
-    let container: ModelContainer = InklingPersistence.makeContainer()
+struct InkusApp: App {
+    let container: ModelContainer = InkusPersistence.makeContainer()
 
     init() {
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared

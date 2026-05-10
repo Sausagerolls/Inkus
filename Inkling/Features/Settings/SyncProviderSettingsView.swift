@@ -77,18 +77,18 @@ struct SyncProviderSettingsView: View {
             HStack {
                 Label("Status", systemImage: "icloud")
                 Spacer()
-                Text(InklingPersistence.activeBackingStore == .cloudKit ? "On" : "Off")
+                Text(InkusPersistence.activeBackingStore == .cloudKit ? "On" : "Off")
                     .font(.caption.weight(.semibold))
                     .padding(.horizontal, Spacing.s)
                     .padding(.vertical, Spacing.xs)
                     .background(
                         Capsule().fill(
-                            InklingPersistence.activeBackingStore == .cloudKit
+                            InkusPersistence.activeBackingStore == .cloudKit
                                 ? Color.green.opacity(0.18)
                                 : Color.orange.opacity(0.18)
                         )
                     )
-                    .foregroundStyle(InklingPersistence.activeBackingStore == .cloudKit ? Color.green : Color.orange)
+                    .foregroundStyle(InkusPersistence.activeBackingStore == .cloudKit ? Color.green : Color.orange)
             }
             Text("iCloud sync is system-managed. Toggle Inkus under Settings → [Your Name] → iCloud → See All → Inkus.")
                 .font(.footnote)

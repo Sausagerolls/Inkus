@@ -4,7 +4,7 @@ import os
 
 private let logger = Logger(subsystem: "com.giantmushroom.Inkling", category: "Persistence")
 
-enum InklingPersistence {
+enum InkusPersistence {
     /// Schema for Inkling. Order matters for migrations down the line.
     static let schema = Schema([
         Journal.self,

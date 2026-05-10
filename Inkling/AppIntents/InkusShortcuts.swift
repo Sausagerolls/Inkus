@@ -2,7 +2,7 @@ import AppIntents
 
 /// Surfaces NewEntryIntent in the Shortcuts app and Spotlight without the user
 /// having to build it manually.
-struct InklingShortcuts: AppShortcutsProvider {
+struct InkusShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: NewEntryIntent(),

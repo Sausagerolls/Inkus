@@ -206,7 +206,7 @@ struct SettingsView: View {
             } label: {
                 Label("Cloud provider", systemImage: "arrow.triangle.2.circlepath.icloud")
             }
-            if case .localFallback(let reason) = InklingPersistence.activeBackingStore {
+            if case .localFallback(let reason) = InkusPersistence.activeBackingStore {
                 Text("iCloud unavailable: \(reason)")
                     .font(.footnote)
                     .foregroundStyle(.orange)
@@ -215,7 +215,7 @@ struct SettingsView: View {
     }
 
     private var syncStatusBadge: String {
-        switch InklingPersistence.activeBackingStore {
+        switch InkusPersistence.activeBackingStore {
         case .cloudKit:        return "On"
         case .local:           return "Local"
         case .localFallback:   return "Off"
@@ -224,7 +224,7 @@ struct SettingsView: View {
     }
 
     private var syncStatusDetail: String {
-        switch InklingPersistence.activeBackingStore {
+        switch InkusPersistence.activeBackingStore {
         case .cloudKit:        return "Active. Entries sync through your iCloud account."
         case .local:           return "Local-only store."
         case .localFallback:   return "CloudKit unavailable — using local storage."
@@ -233,7 +233,7 @@ struct SettingsView: View {
     }
 
     private var syncStatusBadgeBackground: Color {
-        switch InklingPersistence.activeBackingStore {
+        switch InkusPersistence.activeBackingStore {
         case .cloudKit:      return Color.green.opacity(0.18)
         case .localFallback: return Color.orange.opacity(0.18)
         default:             return Color.inkSecondary
@@ -241,7 +241,7 @@ struct SettingsView: View {
     }
 
     private var syncStatusBadgeForeground: Color {
-        switch InklingPersistence.activeBackingStore {
+        switch InkusPersistence.activeBackingStore {
         case .cloudKit:      return Color.green
         case .localFallback: return Color.orange
         default:             return Color.primary

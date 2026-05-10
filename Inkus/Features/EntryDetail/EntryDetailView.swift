@@ -9,6 +9,7 @@ struct EntryDetailView: View {
     @State private var isEditing = false
     @State private var sharedURL: URL?
     @State private var exportError: String?
+    @State private var viewerStartIndex: Int?
 
     private let columns = [
         GridItem(.adaptive(minimum: 110), spacing: Spacing.s)
@@ -60,6 +61,17 @@ struct EntryDetailView: View {
         )) { wrapper in
             ShareSheet(items: [wrapper.url])
         }
+        .fullScreenCover(item: Binding<ViewerStart?>(
+            get: { viewerStartIndex.map { ViewerStart(index: $0) } },
+            set: { viewerStartIndex = $0?.index }
+        )) { start in
+            AttachmentViewerView(attachments: visualAttachments, selectedIndex: start.index)
+        }
+    }
+
+    private struct ViewerStart: Identifiable {
+        let index: Int
+        var id: Int { index }
     }
 
     private func share(asPDF: Bool) {
@@ -98,25 +110,34 @@ struct EntryDetailView: View {
             .textSelection(.enabled)
     }
 
+    private var visualAttachments: [Attachment] {
+        (entry.attachments ?? []).filter { $0.kind != .audio }
+    }
+
     private var photosGrid: some View {
         LazyVGrid(columns: columns, spacing: Spacing.s) {
-            ForEach(entry.attachments ?? []) { attachment in
+            ForEach(Array(visualAttachments.enumerated()), id: \.element.id) { index, attachment in
                 if let img = AttachmentStore.image(from: attachment) {
-                    ZStack(alignment: .bottomLeading) {
-                        Image(uiImage: img)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 110)
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                        if attachment.kind != .photo {
-                            Image(systemName: glyph(for: attachment.kind))
-                                .font(.caption2.weight(.bold))
-                                .foregroundStyle(.white)
-                                .padding(5)
-                                .background(Circle().fill(.black.opacity(0.55)))
-                                .padding(6)
+                    Button {
+                        viewerStartIndex = index
+                    } label: {
+                        ZStack(alignment: .bottomLeading) {
+                            Image(uiImage: img)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 110)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            if attachment.kind != .photo {
+                                Image(systemName: glyph(for: attachment.kind))
+                                    .font(.caption2.weight(.bold))
+                                    .foregroundStyle(.white)
+                                    .padding(5)
+                                    .background(Circle().fill(.black.opacity(0.55)))
+                                    .padding(6)
+                            }
                         }
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }

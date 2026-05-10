@@ -34,6 +34,7 @@ struct EntryEditorView: View {
     @State private var showingDictation = false
     @State private var markupTarget: Attachment?
     @State private var drawingToEdit: Attachment?
+    @State private var viewerStartIndex: Int?
     @FocusState private var bodyFocused: Bool
 
     var body: some View {
@@ -104,6 +105,12 @@ struct EntryEditorView: View {
         }
         .sheet(item: $drawingToEdit) { attachment in
             DoodleView(entry: entry, editing: attachment)
+        }
+        .fullScreenCover(item: Binding<EditorViewerStart?>(
+            get: { viewerStartIndex.map { EditorViewerStart(index: $0) } },
+            set: { viewerStartIndex = $0?.index }
+        )) { start in
+            AttachmentViewerView(attachments: visualAttachments, selectedIndex: start.index)
         }
     }
 
@@ -452,10 +459,27 @@ struct EntryEditorView: View {
 
     private func handleAttachmentTap(_ attachment: Attachment) {
         switch attachment.kind {
-        case .scan:    markupTarget = attachment
-        case .drawing: drawingToEdit = attachment
-        default:       break
+        case .scan:
+            // Scan tap = mark up. The most common follow-up to taking a scan
+            // is to annotate it; expose viewing through EntryDetailView's
+            // photosGrid (read-only view) instead.
+            markupTarget = attachment
+        case .drawing:
+            // Same — tap = re-edit the drawing.
+            drawingToEdit = attachment
+        case .photo:
+            // Tap = full-screen viewer with pinch-zoom + swipe between attachments.
+            if let index = visualAttachments.firstIndex(where: { $0.id == attachment.id }) {
+                viewerStartIndex = index
+            }
+        case .audio:
+            break
         }
+    }
+
+    private struct EditorViewerStart: Identifiable {
+        let index: Int
+        var id: Int { index }
     }
 
     private func appendToBody(_ text: String) {

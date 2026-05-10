@@ -50,19 +50,19 @@
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 843746FF2FAFF39B00E7579F /* InklingWidgetsExtension */;
+			target = 843746FF2FAFF39B00E7579F /* InkusWidgetsExtension */;
 		};
 		AAAA00000000000000000001 /* Exceptions for "Inkus" folder in "Inkus" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 843746882FAFDAEE00E7579F /* Inkling */;
+			target = 843746882FAFDAEE00E7579F /* Inkus */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8437468B2FAFDAEE00E7579F /* Inkling */ = {
+		8437468B2FAFDAEE00E7579F /* Inkus */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				AAAA00000000000000000001 /* Exceptions for "Inkus" folder in "Inkus" target */,
@@ -70,7 +70,7 @@
 			path = Inkus;
 			sourceTree = "<group>";
 		};
-		843747062FAFF39B00E7579F /* InklingWidgets */ = {
+		843747062FAFF39B00E7579F /* InkusWidgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				843747152FAFF39D00E7579F /* Exceptions for "InkusWidgets" folder in "InkusWidgetsExtension" target */,
@@ -104,8 +104,8 @@
 			isa = PBXGroup;
 			children = (
 				8437471A2FAFF3A800E7579F /* InkusWidgetsExtension.entitlements */,
-				8437468B2FAFDAEE00E7579F /* Inkling */,
-				843747062FAFF39B00E7579F /* InklingWidgets */,
+				8437468B2FAFDAEE00E7579F /* Inkus */,
+				843747062FAFF39B00E7579F /* InkusWidgets */,
 				843747012FAFF39B00E7579F /* Frameworks */,
 				8437468A2FAFDAEE00E7579F /* Products */,
 			);
@@ -132,7 +132,7 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		843746882FAFDAEE00E7579F /* Inkling */ = {
+		843746882FAFDAEE00E7579F /* Inkus */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 843746942FAFDAF000E7579F /* Build configuration list for PBXNativeTarget "Inkus" */;
 			buildPhases = (
@@ -147,7 +147,7 @@
 				843747132FAFF39D00E7579F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				8437468B2FAFDAEE00E7579F /* Inkling */,
+				8437468B2FAFDAEE00E7579F /* Inkus */,
 			);
 			name = Inkus;
 			packageProductDependencies = (
@@ -156,7 +156,7 @@
 			productReference = 843746892FAFDAEE00E7579F /* Inkus.app */;
 			productType = "com.apple.product-type.application";
 		};
-		843746FF2FAFF39B00E7579F /* InklingWidgetsExtension */ = {
+		843746FF2FAFF39B00E7579F /* InkusWidgetsExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 843747162FAFF39D00E7579F /* Build configuration list for PBXNativeTarget "InkusWidgetsExtension" */;
 			buildPhases = (
@@ -169,7 +169,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				843747062FAFF39B00E7579F /* InklingWidgets */,
+				843747062FAFF39B00E7579F /* InkusWidgets */,
 			);
 			name = InkusWidgetsExtension;
 			packageProductDependencies = (
@@ -210,8 +210,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				843746882FAFDAEE00E7579F /* Inkling */,
-				843746FF2FAFF39B00E7579F /* InklingWidgetsExtension */,
+				843746882FAFDAEE00E7579F /* Inkus */,
+				843746FF2FAFF39B00E7579F /* InkusWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -254,7 +254,7 @@
 		843747132FAFF39D00E7579F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
-			target = 843746FF2FAFF39B00E7579F /* InklingWidgetsExtension */;
+			target = 843746FF2FAFF39B00E7579F /* InkusWidgetsExtension */;
 			targetProxy = 843747122FAFF39D00E7579F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */

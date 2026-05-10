@@ -1,6 +1,9 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
+import os
+
+private let editorLogger = Logger(subsystem: "com.giantmushroom.Inkling", category: "EntryEditor")
 
 struct EntryEditorView: View {
     @Environment(\.modelContext) private var modelContext
@@ -20,6 +23,9 @@ struct EntryEditorView: View {
     @State private var isImporting = false
     @State private var pendingMood: MoodSuggestion?
     @State private var dismissedSuggestion = false
+    @State private var dismissedAtBodyLength: Int = 0
+    @State private var isAnalysingMood: Bool = false
+    @AppStorage("aiSuggestionsEnabled") private var aiSuggestionsEnabled = true
     @State private var savedFeedbackTrigger: Int = 0
     @State private var moodAcceptedTrigger: Int = 0
     @State private var showingScanner = false
@@ -263,6 +269,17 @@ struct EntryEditorView: View {
 
             Spacer()
 
+            if isAnalysingMood {
+                HStack(spacing: 4) {
+                    Image(systemName: "sparkles")
+                        .font(.caption)
+                        .foregroundStyle(Color.inkAccent)
+                        .symbolEffect(.variableColor.iterative)
+                    Text("Reading…")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
             if isImporting {
                 ProgressView().controlSize(.small)
             }
@@ -291,6 +308,7 @@ struct EntryEditorView: View {
             .tint(Color.inkAccent)
             Button {
                 dismissedSuggestion = true
+                dismissedAtBodyLength = draftBody.trimmingCharacters(in: .whitespacesAndNewlines).count
                 pendingMood = nil
             } label: {
                 Image(systemName: "xmark")
@@ -322,26 +340,42 @@ struct EntryEditorView: View {
     }
 
     private func scheduleMoodSuggestion() {
-        guard AIAvailability.isAvailable,
-              entry.moodLabel == nil,
-              !dismissedSuggestion else { return }
+        guard aiSuggestionsEnabled else { return }
+        guard AIAvailability.isAvailable else {
+            editorLogger.debug("Mood: AI unavailable on this device")
+            return
+        }
+        guard entry.moodLabel == nil else { return }
+
+        // The dismissed flag clears once the body has grown by 50+ chars
+        // since the last dismiss, so users get a fresh suggestion when
+        // they keep writing (rather than being silenced for the session).
+        let trimmed = draftBody.trimmingCharacters(in: .whitespacesAndNewlines)
+        if dismissedSuggestion, (trimmed.count - dismissedAtBodyLength) >= 50 {
+            dismissedSuggestion = false
+        }
+        guard !dismissedSuggestion else { return }
+
         moodSuggestionTask?.cancel()
-        let snapshotBody = draftBody
-        guard snapshotBody.trimmingCharacters(in: .whitespacesAndNewlines).count >= 60 else {
-            // Too short to be useful — wait until there's more.
+        guard trimmed.count >= 40 else {
             pendingMood = nil
             return
         }
+        let snapshotBody = trimmed
         moodSuggestionTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(4))
+            try? await Task.sleep(for: .seconds(2))
             guard !Task.isCancelled else { return }
             guard entry.moodLabel == nil, !dismissedSuggestion else { return }
+            isAnalysingMood = true
+            defer { isAnalysingMood = false }
             do {
+                editorLogger.debug("Mood: requesting suggestion for \(snapshotBody.count) chars")
                 let suggestion = try await MoodSuggester().suggest(for: snapshotBody)
                 guard !Task.isCancelled, entry.moodLabel == nil, !dismissedSuggestion else { return }
+                editorLogger.debug("Mood: suggestion = \(suggestion.mood) \(suggestion.emoji)")
                 pendingMood = suggestion
             } catch {
-                // Silent failure — suggestion is non-essential.
+                editorLogger.error("Mood: suggester failed — \(error.localizedDescription)")
             }
         }
     }

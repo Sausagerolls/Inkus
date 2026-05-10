@@ -13,6 +13,9 @@ struct InklingApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .onOpenURL { url in
+                    _ = OAuthURLHandler.handle(url)
+                }
         }
         .modelContainer(container)
         .commands {

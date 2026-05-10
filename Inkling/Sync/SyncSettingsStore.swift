@@ -47,6 +47,7 @@ final class SyncSettingsStore {
     /// Returns a fresh provider instance for the currently selected kind.
     func currentProvider() -> any SyncProvider {
         switch selectedKind {
+        case .none:        return LocalOnlyProvider()
         case .iCloud:      return ICloudProvider()
         case .nextcloud:   return NextcloudProvider(credentials: nextcloudCredentials)
         case .dropbox:     return DropboxProvider()

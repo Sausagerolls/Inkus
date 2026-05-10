@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>$(PRODUCT_NAME)</string>
+    <key>CFBundleDisplayName</key>
+    <string>Inkling</string>
+    <key>CFBundlePackageType</key>
+    <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$(MARKETING_VERSION)</string>
+    <key>CFBundleVersion</key>
+    <string>$(CURRENT_PROJECT_VERSION)</string>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+
+    <!-- URL types — required for OAuth callback and brand-specific Google scheme. -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>com.giantmushroom.Inkling.oauth</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>inkling</string>
+            </array>
+        </dict>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>com.giantmushroom.Inkling.google</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <!-- Replace with your Google client ID's reverse-DNS form, e.g.
+                     com.googleusercontent.apps.123456-abcdefg
+                     after creating an iOS OAuth client in Google Cloud Console. -->
+                <string>$(INKLING_GOOGLE_REVERSE_CLIENT_ID)</string>
+            </array>
+        </dict>
+    </array>
+
+    <!-- OAuth client identifiers, exposed to the app via Bundle.main.object(forInfoDictionaryKey:).
+         Both are public values for native PKCE clients. Set them via xcconfig or directly here. -->
+    <key>INKLING_DROPBOX_APP_KEY</key>
+    <string>$(INKLING_DROPBOX_APP_KEY)</string>
+    <key>INKLING_GOOGLE_CLIENT_ID</key>
+    <string>$(INKLING_GOOGLE_CLIENT_ID)</string>
+
+    <!-- Background modes for CloudKit push delivery. -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+    </array>
+
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <true/>
+    </dict>
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+    <key>UILaunchScreen</key>
+    <dict/>
+    <key>UIStatusBarStyle</key>
+    <string>UIStatusBarStyleDefault</string>
+
+    <key>UISupportedInterfaceOrientations~iphone</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- Permission strings (placeholders — Apple requires these once we use the APIs). -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Inkling can attach photos from your library to a journal entry. Photos stay on this device unless you opt in to sync.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Inkling uses the camera to scan documents into your journal entries.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Inkling can record voice notes (future feature) — only when you tap record.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Inkling transcribes handwritten notes on-device using Vision; this entitlement is reserved for future audio transcription.</string>
+</dict>
+</plist>

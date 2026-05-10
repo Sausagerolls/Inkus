@@ -9,6 +9,7 @@ import Foundation
 /// snapshots of the SwiftData store on a schedule. The real sync engine
 /// lives in `SyncCoordinator` (Phase 7+ work).
 enum SyncProviderKind: String, Codable, CaseIterable, Identifiable, Sendable {
+    case none
     case iCloud
     case nextcloud
     case dropbox
@@ -18,6 +19,7 @@ enum SyncProviderKind: String, Codable, CaseIterable, Identifiable, Sendable {
 
     var displayName: String {
         switch self {
+        case .none:        return "No sync (local only)"
         case .iCloud:      return "iCloud (Apple)"
         case .nextcloud:   return "Nextcloud"
         case .dropbox:     return "Dropbox"
@@ -25,12 +27,34 @@ enum SyncProviderKind: String, Codable, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    var shortName: String {
+        switch self {
+        case .none:        return "Local"
+        case .iCloud:      return "iCloud"
+        case .nextcloud:   return "Nextcloud"
+        case .dropbox:     return "Dropbox"
+        case .googleDrive: return "Drive"
+        }
+    }
+
+    /// SF Symbol used as a fallback when there's no brand asset.
     var symbol: String {
         switch self {
+        case .none:        return "iphone"
         case .iCloud:      return "icloud"
         case .nextcloud:   return "server.rack"
         case .dropbox:     return "shippingbox"
         case .googleDrive: return "g.circle"
+        }
+    }
+
+    /// Asset catalog name when we ship a real brand logo for this provider.
+    /// Returns nil when we should use the SF Symbol fallback.
+    var assetName: String? {
+        switch self {
+        case .dropbox:     return "logo-dropbox"
+        case .googleDrive: return "logo-googledrive"
+        default:           return nil
         }
     }
 }

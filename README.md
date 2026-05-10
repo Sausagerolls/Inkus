@@ -63,6 +63,31 @@ You'll need Xcode 17+ and an Apple Developer account.
 
 Apple Intelligence features require iOS 26 / macOS 26 with Apple Intelligence enabled (iPhone 15 Pro and later, Apple Silicon Macs). On other devices the app falls back to the bundled 80-prompt bank.
 
+### Optional: Dropbox + Google Drive sync
+
+Both providers use PKCE OAuth — no client secret in the app. You only need to drop in the public client identifiers.
+
+**Dropbox**
+
+1. Sign in to <https://www.dropbox.com/developers/apps> → **Create app** → "Scoped access" → "Full Dropbox" → name "Inkling"
+2. On the **Settings** tab, copy the **App key** and add an OAuth 2 redirect URI: `inkling://oauth-callback/dropbox`
+3. On the **Permissions** tab, enable: `files.content.write`, `files.content.read`, `files.metadata.read`, `files.metadata.write`, `account_info.read`
+4. In Xcode, select the Inkling target → Build Settings → search for `INKLING_DROPBOX_APP_KEY` → paste the app key
+5. Rebuild
+
+**Google Drive**
+
+1. Sign in to <https://console.cloud.google.com/apis/credentials> → **Create Credentials** → **OAuth client ID** → application type **iOS**
+2. Bundle ID: `com.giantmushroom.Inkling` (or whatever you changed it to)
+3. Copy the **Client ID** (looks like `123456789-abc.apps.googleusercontent.com`)
+4. In Xcode, Inkling target → Build Settings:
+   - `INKLING_GOOGLE_CLIENT_ID` = the full client ID
+   - `INKLING_GOOGLE_REVERSE_CLIENT_ID` = the same value reversed, e.g. `com.googleusercontent.apps.123456789-abc`
+5. Enable the Google Drive API for your project at <https://console.cloud.google.com/apis/library/drive.googleapis.com>
+6. Rebuild
+
+When the OAuth identifiers are blank the corresponding Settings section explains what to set; the rest of the app works as normal.
+
 ## Privacy posture
 
 This is the entire point of the app. From the in-app privacy page:

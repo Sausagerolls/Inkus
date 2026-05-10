@@ -51,6 +51,20 @@ struct JournalsListView: View {
                         }
                     }
                 }
+                .contextMenu {
+                    Button {
+                        editing = journal
+                    } label: {
+                        Label("Edit…", systemImage: "pencil")
+                    }
+                    if journals.count > 1 {
+                        Button(role: .destructive) {
+                            deleteJournal(journal)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+                }
             }
         }
         .navigationTitle("Journals")
@@ -65,10 +79,24 @@ struct JournalsListView: View {
             }
         }
         .sheet(item: $editing) { journal in
-            JournalEditorView(editing: journal)
+            JournalEditorView(
+                editing: journal,
+                totalJournalCount: journals.count,
+                onDeleted: { handleDeletedFromEditor(journal) }
+            )
         }
         .sheet(isPresented: $creating) {
             JournalEditorView(editing: nil)
+        }
+    }
+
+    private func handleDeletedFromEditor(_ journal: Journal) {
+        // The editor already called context.delete(journal) + save(). Mirror
+        // the active-journal pointer fix-up that the swipe path does so the
+        // parent view doesn't read a deleted SwiftData object.
+        if journal.id.uuidString == currentJournalID {
+            let next = journals.first(where: { $0.id != journal.id })
+            currentJournalID = next?.id.uuidString ?? ""
         }
     }
 

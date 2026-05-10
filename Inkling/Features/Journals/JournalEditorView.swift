@@ -9,14 +9,30 @@ struct JournalEditorView: View {
     let editing: Journal?
     /// On create, called with the new journal so the caller can mark it selected.
     var onCreated: (Journal) -> Void = { _ in }
+    /// Number of journals in the store at present time. Passed in by the
+    /// parent so we know whether deleting this one would leave the user with
+    /// none — we never let that happen. Defaults to 2 so the create-only path
+    /// (which never shows Delete) doesn't have to thread it.
+    var totalJournalCount: Int = 2
+    /// Called after a successful delete so the parent can dismiss + clean up
+    /// the active-journal pointer.
+    var onDeleted: () -> Void = {}
 
     @State private var name: String
     @State private var iconName: String
     @State private var accentHex: String
+    @State private var showingDeleteConfirm = false
 
-    init(editing: Journal? = nil, onCreated: @escaping (Journal) -> Void = { _ in }) {
+    init(
+        editing: Journal? = nil,
+        totalJournalCount: Int = 2,
+        onCreated: @escaping (Journal) -> Void = { _ in },
+        onDeleted: @escaping () -> Void = {}
+    ) {
         self.editing = editing
+        self.totalJournalCount = totalJournalCount
         self.onCreated = onCreated
+        self.onDeleted = onDeleted
         _name = State(initialValue: editing?.name ?? "")
         _iconName = State(initialValue: editing?.iconName ?? "book.closed")
         _accentHex = State(initialValue: editing?.accentColorHex ?? "#4F46E5")
@@ -70,6 +86,19 @@ struct JournalEditorView: View {
                     }
                     .padding(.vertical, Spacing.xs)
                 }
+
+                if editing != nil && totalJournalCount > 1 {
+                    Section {
+                        Button(role: .destructive) {
+                            showingDeleteConfirm = true
+                        } label: {
+                            Label("Delete journal", systemImage: "trash")
+                                .foregroundStyle(.red)
+                        }
+                    } footer: {
+                        Text("Deletes this journal and every entry, attachment, and reflection it contains. Cannot be undone.")
+                    }
+                }
             }
             .navigationTitle(editing == nil ? "New Journal" : "Edit Journal")
             .navigationBarTitleDisplayMode(.inline)
@@ -83,7 +112,25 @@ struct JournalEditorView: View {
                         .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
+            .confirmationDialog(
+                "Delete \(name)?",
+                isPresented: $showingDeleteConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Delete journal", role: .destructive, action: performDelete)
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("All entries, attachments, and reflections in this journal will be deleted from this device. If you've enabled cloud sync the deletion will sync too.")
+            }
         }
+    }
+
+    private func performDelete() {
+        guard let editing else { return }
+        modelContext.delete(editing)
+        try? modelContext.save()
+        onDeleted()
+        dismiss()
     }
 
     private var iconGrid: some View {

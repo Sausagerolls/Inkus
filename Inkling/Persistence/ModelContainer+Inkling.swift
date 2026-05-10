@@ -100,33 +100,98 @@ enum InklingPersistence {
 
     // MARK: Seed
 
-    /// Inserts default journals the first time the store is created.
-    /// Idempotent — checks existing names so re-runs after upgrades won't duplicate.
+    /// Key in NSUbiquitousKeyValueStore — set the first time defaults are
+    /// seeded for this Apple ID. iCloud key-value sync mirrors it across the
+    /// user's devices so a second device skips the local seed even if its
+    /// CloudKit store hasn't replicated the existing journals yet. Bumping
+    /// the suffix invalidates the flag and re-seeds on every device.
+    private static let seededFlagKey = "co.giantmushroom.inkling.hasSeededDefaultsV1"
+
+    /// Inserts default journals the first time the store is created on this
+    /// Apple ID. Uses NSUbiquitousKeyValueStore as the cross-device "I've
+    /// already seeded" flag so we don't end up with two Personal/Work/Travel
+    /// triples after a second device launches before CloudKit has a chance
+    /// to deliver the originals.
     @MainActor
     private static func seedIfNeeded(container: ModelContainer) {
         let context = container.mainContext
-        let existingNames: Set<String> = {
-            let descriptor = FetchDescriptor<Journal>()
-            let journals = (try? context.fetch(descriptor)) ?? []
-            return Set(journals.map(\.name))
-        }()
+
+        // Always run the merge pass first — even if the seed is skipped,
+        // existing duplicates from earlier versions need to be reconciled.
+        dedupeJournalsByName(in: context)
+
+        let cloudKVS = NSUbiquitousKeyValueStore.default
+        cloudKVS.synchronize()
+        if cloudKVS.bool(forKey: seededFlagKey) {
+            return  // Some device on this Apple ID already seeded.
+        }
+
+        // Fall back to local UserDefaults too — if iCloud KVS is unreachable
+        // (no iCloud account, network down) we don't want to seed every launch.
+        let localDefaults = UserDefaults.standard
+        if localDefaults.bool(forKey: seededFlagKey) {
+            return
+        }
+
+        // Belt + braces: also skip if any journals already exist locally.
+        // Catches the case where the user installed a pre-KVS build and is
+        // upgrading. Their journals are already there; don't add a second set.
+        let existingCount = (try? context.fetchCount(FetchDescriptor<Journal>())) ?? 0
+        guard existingCount == 0 else {
+            cloudKVS.set(true, forKey: seededFlagKey)
+            cloudKVS.synchronize()
+            localDefaults.set(true, forKey: seededFlagKey)
+            return
+        }
 
         let defaults: [(name: String, icon: String, hex: String, order: Int)] = [
             ("Personal", "book.closed", "#4F46E5", 0),
             ("Work",     "briefcase",   "#C05621", 1),
             ("Travel",   "suitcase",    "#2F855A", 2),
         ]
-
-        var inserted = false
-        for spec in defaults where !existingNames.contains(spec.name) {
+        for spec in defaults {
             context.insert(Journal(
                 name: spec.name,
                 iconName: spec.icon,
                 accentColorHex: spec.hex,
                 sortOrder: spec.order
             ))
-            inserted = true
         }
-        if inserted { try? context.save() }
+        try? context.save()
+
+        cloudKVS.set(true, forKey: seededFlagKey)
+        cloudKVS.synchronize()
+        localDefaults.set(true, forKey: seededFlagKey)
+    }
+
+    /// Cleans up the existing-installs case where two devices each ran the
+    /// initial seed before CloudKit synced. Groups journals by exact name.
+    /// For each group with >1 row, picks the oldest (`createdAt` then
+    /// lowest `id` for ties) as canonical, reassigns its entries +
+    /// reflections, and deletes the duplicates. Idempotent.
+    @MainActor
+    static func dedupeJournalsByName(in context: ModelContext) {
+        guard let allJournals = try? context.fetch(FetchDescriptor<Journal>()),
+              !allJournals.isEmpty else { return }
+        let grouped = Dictionary(grouping: allJournals, by: \.name)
+        var didChange = false
+        for (_, group) in grouped where group.count > 1 {
+            let sorted = group.sorted {
+                if $0.createdAt != $1.createdAt { return $0.createdAt < $1.createdAt }
+                return $0.id.uuidString < $1.id.uuidString
+            }
+            let canonical = sorted[0]
+            for dup in sorted.dropFirst() {
+                for entry in dup.entries ?? [] {
+                    entry.journal = canonical
+                }
+                for reflection in dup.reflections ?? [] {
+                    reflection.journal = canonical
+                }
+                context.delete(dup)
+                didChange = true
+            }
+        }
+        if didChange { try? context.save() }
     }
 }

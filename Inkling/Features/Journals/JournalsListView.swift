@@ -7,6 +7,8 @@ struct JournalsListView: View {
     @Query(sort: \Journal.sortOrder)
     private var journals: [Journal]
 
+    @AppStorage("currentJournalID") private var currentJournalID: String = ""
+
     @State private var editing: Journal?
     @State private var creating = false
 
@@ -43,8 +45,7 @@ struct JournalsListView: View {
                 .swipeActions(edge: .trailing) {
                     if journals.count > 1 {
                         Button(role: .destructive) {
-                            modelContext.delete(journal)
-                            try? modelContext.save()
+                            deleteJournal(journal)
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
@@ -69,5 +70,18 @@ struct JournalsListView: View {
         .sheet(isPresented: $creating) {
             JournalEditorView(editing: nil)
         }
+    }
+
+    /// Reassign the current-journal pointer *before* deleting, otherwise any
+    /// view further up the tree (EntryListView's @Query, the prompt card,
+    /// the floating + button) may briefly read a deleted SwiftData object
+    /// and crash.
+    private func deleteJournal(_ journal: Journal) {
+        if journal.id.uuidString == currentJournalID {
+            let next = journals.first(where: { $0.id != journal.id })
+            currentJournalID = next?.id.uuidString ?? ""
+        }
+        modelContext.delete(journal)
+        try? modelContext.save()
     }
 }

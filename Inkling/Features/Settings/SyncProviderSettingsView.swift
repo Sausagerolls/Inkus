@@ -174,7 +174,7 @@ struct SyncProviderSettingsView: View {
             Text("Dropbox")
         } footer: {
             if OAuthConfig.Dropbox.appKey.isEmpty {
-                Text("Set INKLING_DROPBOX_APP_KEY in the build before signing in. See README for the setup walkthrough.")
+                Text("Set INKUS_DROPBOX_APP_KEY in the build before signing in. See README for the setup walkthrough.")
                     .foregroundStyle(.orange)
             } else {
                 Text("Files sync to /Inkus in your Dropbox. Inkus only sees files inside that folder.")
@@ -227,7 +227,7 @@ struct SyncProviderSettingsView: View {
             Text("Google Drive")
         } footer: {
             if OAuthConfig.GoogleDrive.clientID.isEmpty {
-                Text("Set INKLING_GOOGLE_CLIENT_ID in the build before signing in. See README for the setup walkthrough.")
+                Text("Set INKUS_GOOGLE_CLIENT_ID in the build before signing in. See README for the setup walkthrough.")
                     .foregroundStyle(.orange)
             } else {
                 Text("Inkus uses the drive.file scope — it can only read and write files it created itself, never your wider Drive.")

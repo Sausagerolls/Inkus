@@ -6,7 +6,7 @@ import Foundation
 /// Main app writes whenever today's DailyPrompt is created or refreshed.
 /// Widget reads inside its TimelineProvider.
 enum SharedPromptCache {
-    static let appGroupID = "group.com.giantmushroom.Inkling"
+    static let appGroupID = "group.com.giantmushroom.Inkus"
 
     struct Snapshot: Codable, Equatable {
         var date: Date          // start of the day this prompt is for

@@ -5,25 +5,25 @@ import Foundation
 enum OAuthConfig {
 
     enum Dropbox {
-        /// Set on first run from Info.plist `INKLING_DROPBOX_APP_KEY`. Empty
+        /// Set on first run from Info.plist `INKUS_DROPBOX_APP_KEY`. Empty
         /// when the user hasn't dropped their app key in yet.
         static var appKey: String {
-            (Bundle.main.object(forInfoDictionaryKey: "INKLING_DROPBOX_APP_KEY") as? String) ?? ""
+            (Bundle.main.object(forInfoDictionaryKey: "INKUS_DROPBOX_APP_KEY") as? String) ?? ""
         }
         static let authorizationURL = URL(string: "https://www.dropbox.com/oauth2/authorize")!
         static let tokenURL         = URL(string: "https://api.dropboxapi.com/oauth2/token")!
-        static let redirectURI      = "inkling://oauth-callback/dropbox"
+        static let redirectURI      = "inkus://oauth-callback/dropbox"
         // Empty array → Dropbox falls back to whatever scopes the app was
         // configured with on the developer portal (files.content.* etc.).
         static let scopes: [String] = ["files.content.write", "files.content.read", "files.metadata.read", "files.metadata.write", "account_info.read"]
     }
 
     enum GoogleDrive {
-        /// Set on first run from Info.plist `INKLING_GOOGLE_CLIENT_ID`. The
+        /// Set on first run from Info.plist `INKUS_GOOGLE_CLIENT_ID`. The
         /// reverse-DNS form (e.g. `123-abc.apps.googleusercontent.com`) — Google
         /// requires that exact string in the redirect URI as a custom scheme.
         static var clientID: String {
-            (Bundle.main.object(forInfoDictionaryKey: "INKLING_GOOGLE_CLIENT_ID") as? String) ?? ""
+            (Bundle.main.object(forInfoDictionaryKey: "INKUS_GOOGLE_CLIENT_ID") as? String) ?? ""
         }
         static let authorizationURL = URL(string: "https://accounts.google.com/o/oauth2/v2/auth")!
         static let tokenURL         = URL(string: "https://oauth2.googleapis.com/token")!

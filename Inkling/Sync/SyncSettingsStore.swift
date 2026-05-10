@@ -10,10 +10,10 @@ import Security
 final class SyncSettingsStore {
     static let shared = SyncSettingsStore()
 
-    private let kindKey = "co.giantmushroom.inkling.syncProvider"
-    private let nextcloudURLKey = "co.giantmushroom.inkling.nextcloud.url"
-    private let nextcloudUserKey = "co.giantmushroom.inkling.nextcloud.user"
-    private let nextcloudPasswordService = "co.giantmushroom.inkling.nextcloud.appPassword"
+    private let kindKey = "co.giantmushroom.inkus.syncProvider"
+    private let nextcloudURLKey = "co.giantmushroom.inkus.nextcloud.url"
+    private let nextcloudUserKey = "co.giantmushroom.inkus.nextcloud.user"
+    private let nextcloudPasswordService = "co.giantmushroom.inkus.nextcloud.appPassword"
 
     var selectedKind: SyncProviderKind {
         didSet { UserDefaults.standard.set(selectedKind.rawValue, forKey: kindKey) }

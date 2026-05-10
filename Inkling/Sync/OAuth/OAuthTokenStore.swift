@@ -19,8 +19,8 @@ struct OAuthToken: Codable, Equatable, Sendable {
 
 @MainActor
 enum OAuthTokenStore {
-    private static let serviceDropbox = "co.giantmushroom.inkling.oauth.dropbox"
-    private static let serviceGoogle  = "co.giantmushroom.inkling.oauth.google"
+    private static let serviceDropbox = "co.giantmushroom.inkus.oauth.dropbox"
+    private static let serviceGoogle  = "co.giantmushroom.inkus.oauth.google"
 
     static func load(_ kind: SyncProviderKind) -> OAuthToken? {
         guard let service = service(for: kind),

@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import os
 
-private let logger = Logger(subsystem: "com.giantmushroom.Inkling", category: "Persistence")
+private let logger = Logger(subsystem: "com.giantmushroom.Inkus", category: "Persistence")
 
 enum InkusPersistence {
     /// Schema for Inkling. Order matters for migrations down the line.
@@ -15,11 +15,11 @@ enum InkusPersistence {
     ])
 
     /// CloudKit container identifier — must match the iCloud capability set in Xcode.
-    static let cloudKitContainerID = "iCloud.com.giantmushroom.Inkling"
+    static let cloudKitContainerID = "iCloud.com.giantmushroom.Inkus"
 
     /// Shared App Group identifier — must match the App Group capability and be set
     /// on both the app and the widget extension target.
-    static let appGroupID = "group.com.giantmushroom.Inkling"
+    static let appGroupID = "group.com.giantmushroom.Inkus"
 
     /// Diagnostic — set during makeContainer() so the Settings UI can display
     /// whether the active store is CloudKit-backed or fell back to local-only.
@@ -105,7 +105,7 @@ enum InkusPersistence {
     /// user's devices so a second device skips the local seed even if its
     /// CloudKit store hasn't replicated the existing journals yet. Bumping
     /// the suffix invalidates the flag and re-seeds on every device.
-    private static let seededFlagKey = "co.giantmushroom.inkling.hasSeededDefaultsV1"
+    private static let seededFlagKey = "co.giantmushroom.inkus.hasSeededDefaultsV1"
 
     /// Inserts default journals the first time the store is created on this
     /// Apple ID. Uses NSUbiquitousKeyValueStore as the cross-device "I've

@@ -33,7 +33,7 @@
             <string>com.giantmushroom.Inkus.oauth</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>inkling</string>
+                <string>inkus</string>
             </array>
         </dict>
         <dict>
@@ -46,17 +46,17 @@
                 <!-- Replace with your Google client ID's reverse-DNS form, e.g.
                      com.googleusercontent.apps.123456-abcdefg
                      after creating an iOS OAuth client in Google Cloud Console. -->
-                <string>$(INKLING_GOOGLE_REVERSE_CLIENT_ID)</string>
+                <string>$(INKUS_GOOGLE_REVERSE_CLIENT_ID)</string>
             </array>
         </dict>
     </array>
 
     <!-- OAuth client identifiers, exposed to the app via Bundle.main.object(forInfoDictionaryKey:).
          Both are public values for native PKCE clients. Set them via xcconfig or directly here. -->
-    <key>INKLING_DROPBOX_APP_KEY</key>
-    <string>$(INKLING_DROPBOX_APP_KEY)</string>
-    <key>INKLING_GOOGLE_CLIENT_ID</key>
-    <string>$(INKLING_GOOGLE_CLIENT_ID)</string>
+    <key>INKUS_DROPBOX_APP_KEY</key>
+    <string>$(INKUS_DROPBOX_APP_KEY)</string>
+    <key>INKUS_GOOGLE_CLIENT_ID</key>
+    <string>$(INKUS_GOOGLE_CLIENT_ID)</string>
 
     <!-- Background modes for CloudKit push delivery. -->
     <key>UIBackgroundModes</key>

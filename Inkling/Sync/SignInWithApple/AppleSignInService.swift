@@ -36,9 +36,9 @@ final class AppleSignInService: NSObject {
 
     var isSignedIn: Bool { userIdentifier != nil }
 
-    private let nameKey   = "co.giantmushroom.inkling.appleSignIn.displayName"
-    private let emailKey  = "co.giantmushroom.inkling.appleSignIn.email"
-    private let kcService = "co.giantmushroom.inkling.appleSignIn.userIdentifier"
+    private let nameKey   = "co.giantmushroom.inkus.appleSignIn.displayName"
+    private let emailKey  = "co.giantmushroom.inkus.appleSignIn.email"
+    private let kcService = "co.giantmushroom.inkus.appleSignIn.userIdentifier"
 
     // MARK: Public API
 
@@ -133,7 +133,7 @@ final class AppleSignInService: NSObject {
     // MARK: Keychain (user identifier)
 
     nonisolated private static func writeUserIdentifier(_ id: String) {
-        let service = "co.giantmushroom.inkling.appleSignIn.userIdentifier"
+        let service = "co.giantmushroom.inkus.appleSignIn.userIdentifier"
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -147,7 +147,7 @@ final class AppleSignInService: NSObject {
     }
 
     nonisolated private static func readUserIdentifier() -> String? {
-        let service = "co.giantmushroom.inkling.appleSignIn.userIdentifier"
+        let service = "co.giantmushroom.inkus.appleSignIn.userIdentifier"
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,

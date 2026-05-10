@@ -19,5 +19,5 @@ struct NewEntryIntent: AppIntent {
 }
 
 extension Notification.Name {
-    static let inklingNewEntryRequested = Notification.Name("co.giantmushroom.inkling.newEntryRequested")
+    static let inklingNewEntryRequested = Notification.Name("co.giantmushroom.inkus.newEntryRequested")
 }

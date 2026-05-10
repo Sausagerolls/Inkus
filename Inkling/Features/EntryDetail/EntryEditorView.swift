@@ -3,7 +3,7 @@ import SwiftData
 import PhotosUI
 import os
 
-private let editorLogger = Logger(subsystem: "com.giantmushroom.Inkling", category: "EntryEditor")
+private let editorLogger = Logger(subsystem: "com.giantmushroom.Inkus", category: "EntryEditor")
 
 struct EntryEditorView: View {
     @Environment(\.modelContext) private var modelContext

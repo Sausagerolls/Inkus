@@ -41,7 +41,7 @@
 		843747002FAFF39B00E7579F /* InklingWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = InklingWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		843747022FAFF39B00E7579F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		843747042FAFF39B00E7579F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		8437471A2FAFF3A800E7579F /* InklingWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InklingWidgetsExtension.entitlements; sourceTree = "<group>"; };
+		8437471A2FAFF3A800E7579F /* InkusWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InkusWidgetsExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -103,7 +103,7 @@
 		843746802FAFDAEE00E7579F = {
 			isa = PBXGroup;
 			children = (
-				8437471A2FAFF3A800E7579F /* InklingWidgetsExtension.entitlements */,
+				8437471A2FAFF3A800E7579F /* InkusWidgetsExtension.entitlements */,
 				8437468B2FAFDAEE00E7579F /* Inkling */,
 				843747062FAFF39B00E7579F /* InklingWidgets */,
 				843747012FAFF39B00E7579F /* Frameworks */,
@@ -381,7 +381,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Inkling/Inkling.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Inkling/Inkus.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = J4UJD4Z33J;
@@ -391,15 +391,15 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Inkling/Info.plist;
-				INKLING_DROPBOX_APP_KEY = tc8p5r8dop8z0b9;
-				INKLING_GOOGLE_CLIENT_ID = "615150085560-237cd6pon1r2m9oqp22uvn67e4n1v77b.apps.googleusercontent.com";
-				INKLING_GOOGLE_REVERSE_CLIENT_ID = "com.googleusercontent.apps.615150085560-237cd6pon1r2m9oqp22uvn67e4n1v77b";
+				INKUS_DROPBOX_APP_KEY = tc8p5r8dop8z0b9;
+				INKUS_GOOGLE_CLIENT_ID = "615150085560-237cd6pon1r2m9oqp22uvn67e4n1v77b.apps.googleusercontent.com";
+				INKUS_GOOGLE_REVERSE_CLIENT_ID = "com.googleusercontent.apps.615150085560-237cd6pon1r2m9oqp22uvn67e4n1v77b";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkling;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -421,7 +421,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Inkling/Inkling.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Inkling/Inkus.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = J4UJD4Z33J;
@@ -431,15 +431,15 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Inkling/Info.plist;
-				INKLING_DROPBOX_APP_KEY = tc8p5r8dop8z0b9;
-				INKLING_GOOGLE_CLIENT_ID = "615150085560-237cd6pon1r2m9oqp22uvn67e4n1v77b.apps.googleusercontent.com";
-				INKLING_GOOGLE_REVERSE_CLIENT_ID = "com.googleusercontent.apps.615150085560-237cd6pon1r2m9oqp22uvn67e4n1v77b";
+				INKUS_DROPBOX_APP_KEY = tc8p5r8dop8z0b9;
+				INKUS_GOOGLE_CLIENT_ID = "615150085560-237cd6pon1r2m9oqp22uvn67e4n1v77b.apps.googleusercontent.com";
+				INKUS_GOOGLE_REVERSE_CLIENT_ID = "com.googleusercontent.apps.615150085560-237cd6pon1r2m9oqp22uvn67e4n1v77b";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkling;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -461,7 +461,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = InklingWidgetsExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = InkusWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = J4UJD4Z33J;
@@ -476,7 +476,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkling.InklingWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkus.InkusWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -494,7 +494,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = InklingWidgetsExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = InkusWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = J4UJD4Z33J;
@@ -509,7 +509,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkling.InklingWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantmushroom.Inkus.InkusWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

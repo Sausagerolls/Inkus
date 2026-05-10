@@ -116,6 +116,7 @@ struct EntryListView: View {
                     Image(systemName: "magnifyingglass")
                 }
                 .accessibilityLabel("Search")
+                .keyboardShortcut("f", modifiers: .command)
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -124,6 +125,7 @@ struct EntryListView: View {
                     Image(systemName: "gearshape")
                 }
                 .accessibilityLabel("Settings")
+                .keyboardShortcut(",", modifiers: .command)
             }
         }
         .sheet(isPresented: $showingSwitcher) {
@@ -152,6 +154,12 @@ struct EntryListView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .inklingShowWeeklyReflectionRequested)) { _ in
             handleReflectionTap()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .inklingShowSearchRequested)) { _ in
+            showingSearch = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .inklingShowSettingsRequested)) { _ in
+            showingSettings = true
         }
         .sheet(item: $newDraft) { draft in
             NavigationStack {
@@ -234,6 +242,7 @@ struct EntryListView: View {
                 .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
         }
         .accessibilityLabel("New entry")
+        .keyboardShortcut("n", modifiers: .command)
         .disabled(currentJournal == nil)
     }
 

@@ -199,42 +199,17 @@ struct SettingsView: View {
     }
 
     private var syncSection: some View {
-        Section {
-            HStack(spacing: Spacing.s) {
-                Image(systemName: "icloud")
-                    .foregroundStyle(Color.inkAccent)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("iCloud sync")
-                        .font(.callout.weight(.medium))
-                    Text(syncStatusDetail)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                Text(syncStatusBadge)
-                    .font(.caption.weight(.semibold))
-                    .padding(.horizontal, Spacing.s)
-                    .padding(.vertical, Spacing.xs)
-                    .background(Capsule().fill(syncStatusBadgeBackground))
-                    .foregroundStyle(syncStatusBadgeForeground)
+        Section("Sync") {
+            NavigationLink {
+                SyncProviderSettingsView()
+            } label: {
+                Label("Cloud provider", systemImage: "arrow.triangle.2.circlepath.icloud")
             }
             if case .localFallback(let reason) = InklingPersistence.activeBackingStore {
-                Text("CloudKit error: \(reason)")
+                Text("iCloud unavailable: \(reason)")
                     .font(.footnote)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(.orange)
             }
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                Text("To enable or disable sync:")
-                    .font(.footnote.weight(.medium))
-                Text("Settings → your name at the top → iCloud → See All → Inkling")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.vertical, Spacing.xs)
-        } header: {
-            Text("Sync")
-        } footer: {
-            Text("Text entries, mood, and tags sync via your private iCloud database. Photos stay on this device for now (sync coming in a future update). Inkling will only show in the iCloud apps list after you've written an entry while signed in to iCloud.")
         }
     }
 

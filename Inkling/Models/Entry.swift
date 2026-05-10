@@ -22,10 +22,14 @@ final class Entry {
     var weatherSummary: String?  // "sunny, 18°C"
     var locationName: String?    // city or place name only — never coords stored
 
-    // Attachments — filename references; binaries stay device-local for v1.0
-    // (sync of binary attachments is a v1.1 feature per Phase 5.4 decision).
+    // Legacy on-disk attachment filenames. Kept for one-time migration into
+    // the new Attachment @Model rows; new code should read `attachments`.
     var photoFilenames: [String] = []
     var audioFilenames: [String] = []
+
+    /// CloudKit-syncable attachments. Cascade-deleted with the entry.
+    @Relationship(deleteRule: .cascade, inverse: \Attachment.entry)
+    var attachments: [Attachment]? = []
 
     // Source of the prompt that generated this entry, if any
     var sourcePromptID: UUID?

@@ -22,6 +22,11 @@ struct EntryEditorView: View {
     @State private var dismissedSuggestion = false
     @State private var savedFeedbackTrigger: Int = 0
     @State private var moodAcceptedTrigger: Int = 0
+    @State private var showingScanner = false
+    @State private var showingDoodle = false
+    @State private var showingHandwriting = false
+    @State private var markupTarget: Attachment?
+    @State private var drawingToEdit: Attachment?
     @FocusState private var bodyFocused: Bool
 
     var body: some View {
@@ -58,6 +63,41 @@ struct EntryEditorView: View {
         }
         .sensoryFeedback(.success, trigger: savedFeedbackTrigger)
         .sensoryFeedback(.selection, trigger: moodAcceptedTrigger)
+        #if !targetEnvironment(macCatalyst)
+        .fullScreenCover(isPresented: $showingScanner) {
+            DocumentScannerView(
+                onComplete: { pages in
+                    for page in pages {
+                        _ = try? AttachmentStore.saveScan(page, to: entry, in: modelContext)
+                    }
+                    entry.updatedAt = .now
+                    try? modelContext.save()
+                    showingScanner = false
+                },
+                onCancel: { showingScanner = false }
+            )
+            .ignoresSafeArea()
+        }
+        #endif
+        .sheet(isPresented: $showingDoodle) {
+            DoodleView(entry: entry, editing: nil)
+        }
+        .sheet(isPresented: $showingHandwriting) {
+            HandwritingView { recognised in
+                if !recognised.isEmpty {
+                    if !draftBody.isEmpty && !draftBody.hasSuffix("\n") {
+                        draftBody += "\n"
+                    }
+                    draftBody += recognised
+                }
+            }
+        }
+        .sheet(item: $markupTarget) { attachment in
+            ScanMarkupView(attachment: attachment)
+        }
+        .sheet(item: $drawingToEdit) { attachment in
+            DoodleView(entry: entry, editing: attachment)
+        }
     }
 
     // MARK: Subviews
@@ -81,7 +121,7 @@ struct EntryEditorView: View {
         }
         .background(Color.inkBackground)
         .overlay(alignment: .bottom) {
-            if !entry.photoFilenames.isEmpty {
+            if !(entry.attachments ?? []).isEmpty {
                 attachmentStrip
                     .padding(Spacing.m)
             }
@@ -91,29 +131,51 @@ struct EntryEditorView: View {
     private var attachmentStrip: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Spacing.s) {
-                ForEach(entry.photoFilenames, id: \.self) { filename in
-                    if let img = AttachmentStore.loadPhoto(filename: filename, for: entry.id) {
-                        Image(uiImage: img)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 72, height: 72)
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                            .overlay(alignment: .topTrailing) {
-                                Button {
-                                    removePhoto(filename: filename)
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(.white, .black.opacity(0.6))
-                                        .font(.title3)
+                ForEach(entry.attachments ?? []) { attachment in
+                    if let img = AttachmentStore.image(from: attachment) {
+                        Button { handleAttachmentTap(attachment) } label: {
+                            Image(uiImage: img)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 72, height: 72)
+                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .overlay(alignment: .topTrailing) {
+                                    Button {
+                                        removeAttachment(attachment)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .symbolRenderingMode(.palette)
+                                            .foregroundStyle(.white, .black.opacity(0.6))
+                                            .font(.title3)
+                                    }
+                                    .offset(x: 6, y: -6)
                                 }
-                                .offset(x: 6, y: -6)
-                            }
+                                .overlay(alignment: .bottomLeading) {
+                                    if attachment.kind != .photo {
+                                        Image(systemName: kindGlyph(attachment.kind))
+                                            .font(.caption2.weight(.bold))
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                            .background(Circle().fill(.black.opacity(0.55)))
+                                            .padding(4)
+                                    }
+                                }
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
         }
         .padding(.vertical, Spacing.xs)
+    }
+
+    private func kindGlyph(_ kind: AttachmentKind) -> String {
+        switch kind {
+        case .photo:   return "photo"
+        case .audio:   return "waveform"
+        case .scan:    return "doc.viewfinder"
+        case .drawing: return "pencil.tip"
+        }
     }
 
     private var toolbar: some View {
@@ -128,6 +190,33 @@ struct EntryEditorView: View {
                     .font(.title3)
             }
             .disabled(isImporting)
+            .accessibilityLabel("Add photo")
+
+            #if !targetEnvironment(macCatalyst)
+            Button {
+                showingScanner = true
+            } label: {
+                Image(systemName: "doc.viewfinder")
+                    .font(.title3)
+            }
+            .accessibilityLabel("Scan document")
+            #endif
+
+            Button {
+                showingDoodle = true
+            } label: {
+                Image(systemName: "pencil.tip")
+                    .font(.title3)
+            }
+            .accessibilityLabel("Add doodle")
+
+            Button {
+                showingHandwriting = true
+            } label: {
+                Image(systemName: "hand.draw")
+                    .font(.title3)
+            }
+            .accessibilityLabel("Handwriting input")
 
             Spacer()
 
@@ -237,16 +326,18 @@ struct EntryEditorView: View {
         try? modelContext.save()
     }
 
+    private var draftIsEmpty: Bool {
+        draftBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && (entry.attachments ?? []).isEmpty
+    }
+
     private func done() {
         saveTask?.cancel()
         moodSuggestionTask?.cancel()
         persist()
-        if isNewDraft && draftBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            && entry.photoFilenames.isEmpty {
-            let id = entry.id
+        if isNewDraft && draftIsEmpty {
             modelContext.delete(entry)
             try? modelContext.save()
-            AttachmentStore.deleteAllAttachments(for: id)
         } else {
             savedFeedbackTrigger += 1
         }
@@ -256,38 +347,37 @@ struct EntryEditorView: View {
     private func cancel() {
         saveTask?.cancel()
         moodSuggestionTask?.cancel()
-        if isNewDraft && draftBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            && entry.photoFilenames.isEmpty {
-            let id = entry.id
+        if isNewDraft && draftIsEmpty {
             modelContext.delete(entry)
             try? modelContext.save()
-            AttachmentStore.deleteAllAttachments(for: id)
         }
         dismiss()
     }
 
     private func importPickedPhotos(_ items: [PhotosPickerItem]) {
         isImporting = true
-        let entryID = entry.id
         Task { @MainActor in
             defer { isImporting = false; pickerItems = [] }
-            var savedFilenames: [String] = []
             for item in items {
                 guard let data = try? await item.loadTransferable(type: Data.self) else { continue }
-                if let filename = try? AttachmentStore.savePhoto(data, for: entryID) {
-                    savedFilenames.append(filename)
-                }
+                _ = try? AttachmentStore.savePhoto(data, to: entry, in: modelContext)
             }
-            entry.photoFilenames.append(contentsOf: savedFilenames)
             entry.updatedAt = .now
             try? modelContext.save()
         }
     }
 
-    private func removePhoto(filename: String) {
-        AttachmentStore.deletePhoto(filename: filename, for: entry.id)
-        entry.photoFilenames.removeAll { $0 == filename }
+    private func removeAttachment(_ attachment: Attachment) {
+        AttachmentStore.delete(attachment, in: modelContext)
         entry.updatedAt = .now
         try? modelContext.save()
+    }
+
+    private func handleAttachmentTap(_ attachment: Attachment) {
+        switch attachment.kind {
+        case .scan:    markupTarget = attachment
+        case .drawing: drawingToEdit = attachment
+        default:       break
+        }
     }
 }

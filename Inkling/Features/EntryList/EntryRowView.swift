@@ -26,8 +26,8 @@ struct EntryRowView: View {
                         Text(mood)
                             .font(.caption)
                     }
-                    if !entry.photoFilenames.isEmpty {
-                        Image(systemName: "photo")
+                    if !(entry.attachments ?? []).isEmpty {
+                        Image(systemName: attachmentGlyph)
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
@@ -53,12 +53,23 @@ struct EntryRowView: View {
         .accessibilityLabel(accessibilityLabel)
     }
 
+    /// Pick the glyph based on the dominant attachment kind so the row hints
+    /// at what's inside without needing extra UI.
+    private var attachmentGlyph: String {
+        let kinds = (entry.attachments ?? []).map(\.kind)
+        if kinds.contains(.scan)    { return "doc.viewfinder" }
+        if kinds.contains(.drawing) { return "pencil.tip" }
+        if kinds.contains(.audio)   { return "waveform" }
+        return "photo"
+    }
+
     private var accessibilityLabel: String {
         var parts: [String] = [timeString]
         if let mood = entry.moodLabel { parts.append("mood \(mood)") }
         parts.append(preview)
-        if !entry.photoFilenames.isEmpty {
-            parts.append("\(entry.photoFilenames.count) photo\(entry.photoFilenames.count == 1 ? "" : "s")")
+        let attachmentCount = (entry.attachments ?? []).count
+        if attachmentCount > 0 {
+            parts.append("\(attachmentCount) attachment\(attachmentCount == 1 ? "" : "s")")
         }
         if !entry.tags.isEmpty { parts.append("tags \(entry.tags.joined(separator: ", "))") }
         return parts.joined(separator: ", ")

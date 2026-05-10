@@ -11,6 +11,7 @@ enum InklingPersistence {
         Entry.self,
         WeeklyReflection.self,
         DailyPrompt.self,
+        Attachment.self,
     ])
 
     /// CloudKit container identifier — must match the iCloud capability set in Xcode.
@@ -43,6 +44,7 @@ enum InklingPersistence {
         do {
             let cloud = try makeCloudKit()
             seedIfNeeded(container: cloud)
+            AttachmentStore.migrateLegacyFilesIfNeeded(in: cloud.mainContext)
             activeBackingStore = .cloudKit
             logger.info("ModelContainer: CloudKit private DB active (\(cloudKitContainerID))")
             return cloud
@@ -51,6 +53,7 @@ enum InklingPersistence {
             logger.warning("CloudKit container init failed (\(reason)) — falling back to local store. Check iCloud + App Group capabilities in Xcode.")
             let local = makeLocal()
             seedIfNeeded(container: local)
+            AttachmentStore.migrateLegacyFilesIfNeeded(in: local.mainContext)
             activeBackingStore = .localFallback(reason: reason)
             return local
         }

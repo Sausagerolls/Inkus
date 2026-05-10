@@ -19,7 +19,7 @@ struct EntryDetailView: View {
             VStack(alignment: .leading, spacing: Spacing.l) {
                 header
                 bodyText
-                if !entry.photoFilenames.isEmpty { photosGrid }
+                if !(entry.attachments ?? []).isEmpty { photosGrid }
                 if !entry.tags.isEmpty { tagChips }
                 Spacer(minLength: Spacing.xxl)
             }
@@ -100,15 +100,34 @@ struct EntryDetailView: View {
 
     private var photosGrid: some View {
         LazyVGrid(columns: columns, spacing: Spacing.s) {
-            ForEach(entry.photoFilenames, id: \.self) { filename in
-                if let img = AttachmentStore.loadPhoto(filename: filename, for: entry.id) {
-                    Image(uiImage: img)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 110)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            ForEach(entry.attachments ?? []) { attachment in
+                if let img = AttachmentStore.image(from: attachment) {
+                    ZStack(alignment: .bottomLeading) {
+                        Image(uiImage: img)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 110)
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        if attachment.kind != .photo {
+                            Image(systemName: glyph(for: attachment.kind))
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(.white)
+                                .padding(5)
+                                .background(Circle().fill(.black.opacity(0.55)))
+                                .padding(6)
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    private func glyph(for kind: AttachmentKind) -> String {
+        switch kind {
+        case .photo:   return "photo"
+        case .audio:   return "waveform"
+        case .scan:    return "doc.viewfinder"
+        case .drawing: return "pencil.tip"
         }
     }
 

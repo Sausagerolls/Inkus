@@ -374,7 +374,7 @@
 				CODE_SIGN_ENTITLEMENTS = Inkling/Inkling.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J4UJD4Z33J;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -420,7 +420,7 @@
 				CODE_SIGN_ENTITLEMENTS = Inkling/Inkling.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J4UJD4Z33J;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -466,7 +466,7 @@
 				CODE_SIGN_ENTITLEMENTS = InklingWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J4UJD4Z33J;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = InklingWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = InklingWidgets;
@@ -499,7 +499,7 @@
 				CODE_SIGN_ENTITLEMENTS = InklingWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J4UJD4Z33J;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = InklingWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = InklingWidgets;

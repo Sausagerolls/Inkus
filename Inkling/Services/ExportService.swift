@@ -39,9 +39,11 @@ enum ExportService {
         lines.append("---")
         lines.append("")
         lines.append(entry.body)
-        if !entry.photoFilenames.isEmpty {
+        let attachments = entry.attachments ?? []
+        if !attachments.isEmpty {
+            let n = attachments.count
             lines.append("")
-            lines.append("_(\(entry.photoFilenames.count) photo\(entry.photoFilenames.count == 1 ? "" : "s") attached — kept on device.)_")
+            lines.append("_(\(n) attachment\(n == 1 ? "" : "s") — see the app for the rendered images.)_")
         }
         return lines.joined(separator: "\n")
     }

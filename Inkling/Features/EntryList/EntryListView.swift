@@ -266,10 +266,11 @@ struct EntryListView: View {
     }
 
     private func delete(_ entry: Entry) {
-        let id = entry.id
+        // Cascade-delete on the @Relationship from Entry → Attachment removes
+        // the attachments automatically; no on-disk cleanup required now that
+        // attachments live in SwiftData.
         modelContext.delete(entry)
         try? modelContext.save()
-        AttachmentStore.deleteAllAttachments(for: id)
     }
 
     private func loadPromptIfNeeded() async {

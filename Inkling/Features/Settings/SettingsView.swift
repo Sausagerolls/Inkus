@@ -34,6 +34,7 @@ struct SettingsView: View {
                 notificationsSection
                 aiSection
                 syncSection
+                accountSection
                 privacySection
                 exportSection
                 aboutSection
@@ -269,6 +270,31 @@ struct SettingsView: View {
             } label: {
                 Label("Markdown / PDF", systemImage: "square.and.arrow.up")
             }
+        }
+    }
+
+    private var accountSection: some View {
+        Section {
+            NavigationLink {
+                AppleSignInSettingsView()
+            } label: {
+                Label {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Sign in with Apple")
+                        if let label = AppleSignInService.shared.attributionLine {
+                            Text("Signed in as \(label)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } icon: {
+                    Image(systemName: "apple.logo")
+                }
+            }
+        } header: {
+            Text("Identity")
+        } footer: {
+            Text("Optional. Inkling has no account — signing in only stores your name and email locally so the app can greet you and stamp your name on exports.")
         }
     }
 

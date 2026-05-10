@@ -25,6 +25,7 @@ struct EntryEditorView: View {
     @State private var showingScanner = false
     @State private var showingDoodle = false
     @State private var showingHandwriting = false
+    @State private var showingDictation = false
     @State private var markupTarget: Attachment?
     @State private var drawingToEdit: Attachment?
     @FocusState private var bodyFocused: Bool
@@ -84,12 +85,12 @@ struct EntryEditorView: View {
         }
         .sheet(isPresented: $showingHandwriting) {
             HandwritingView { recognised in
-                if !recognised.isEmpty {
-                    if !draftBody.isEmpty && !draftBody.hasSuffix("\n") {
-                        draftBody += "\n"
-                    }
-                    draftBody += recognised
-                }
+                appendToBody(recognised)
+            }
+        }
+        .sheet(isPresented: $showingDictation) {
+            VoiceDictationView(entry: entry) { recognised in
+                appendToBody(recognised)
             }
         }
         .sheet(item: $markupTarget) { attachment in
@@ -129,9 +130,43 @@ struct EntryEditorView: View {
     }
 
     private var attachmentStrip: some View {
+        VStack(alignment: .leading, spacing: Spacing.s) {
+            // Audio attachments get their own row of inline players so the
+            // user can play them back without leaving the editor.
+            ForEach(audioAttachments) { audio in
+                HStack(spacing: Spacing.s) {
+                    AudioAttachmentPlayer(attachment: audio)
+                    Button {
+                        removeAttachment(audio)
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .black.opacity(0.6))
+                            .font(.title3)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            // Visual attachments stay in the horizontal thumbnail strip.
+            if !visualAttachments.isEmpty {
+                visualThumbStrip
+            }
+        }
+    }
+
+    private var audioAttachments: [Attachment] {
+        (entry.attachments ?? []).filter { $0.kind == .audio }
+    }
+
+    private var visualAttachments: [Attachment] {
+        (entry.attachments ?? []).filter { $0.kind != .audio }
+    }
+
+    private var visualThumbStrip: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Spacing.s) {
-                ForEach(entry.attachments ?? []) { attachment in
+                ForEach(visualAttachments) { attachment in
                     if let img = AttachmentStore.image(from: attachment) {
                         Button { handleAttachmentTap(attachment) } label: {
                             Image(uiImage: img)
@@ -217,6 +252,14 @@ struct EntryEditorView: View {
                     .font(.title3)
             }
             .accessibilityLabel("Handwriting input")
+
+            Button {
+                showingDictation = true
+            } label: {
+                Image(systemName: "mic")
+                    .font(.title3)
+            }
+            .accessibilityLabel("Voice dictation")
 
             Spacer()
 
@@ -379,5 +422,14 @@ struct EntryEditorView: View {
         case .drawing: drawingToEdit = attachment
         default:       break
         }
+    }
+
+    private func appendToBody(_ text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        if !draftBody.isEmpty && !draftBody.hasSuffix("\n") {
+            draftBody += "\n"
+        }
+        draftBody += trimmed
     }
 }

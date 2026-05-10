@@ -42,6 +42,12 @@ struct SyncProviderSettingsView: View {
             dropboxToken = OAuthTokenStore.load(.dropbox)
             driveToken = OAuthTokenStore.load(.googleDrive)
         }
+        .onChange(of: store.selectedKind) { _, _ in
+            // Reset transient state so a stale "OK" or error from the previous
+            // provider doesn't bleed into the new section.
+            status = .idle
+            isWorking = false
+        }
     }
 
     // MARK: Provider icon helper

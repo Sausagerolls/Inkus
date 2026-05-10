@@ -12,6 +12,8 @@ enum InkusPersistence {
         WeeklyReflection.self,
         DailyPrompt.self,
         Attachment.self,
+        ChatThread.self,
+        ChatMessage.self,
     ])
 
     /// CloudKit container identifier — must match the iCloud capability set in Xcode.

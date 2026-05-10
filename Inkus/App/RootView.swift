@@ -6,8 +6,20 @@ struct RootView: View {
 
     var body: some View {
         if hasCompletedOnboarding {
-            NavigationStack {
-                EntryListView()
+            TabView {
+                NavigationStack {
+                    EntryListView()
+                }
+                .tabItem {
+                    Label("Journal", systemImage: "book.closed")
+                }
+
+                NavigationStack {
+                    TalkView()
+                }
+                .tabItem {
+                    Label("Talk", systemImage: "sparkles")
+                }
             }
         } else {
             OnboardingView()

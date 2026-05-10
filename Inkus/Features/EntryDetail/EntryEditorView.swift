@@ -35,6 +35,7 @@ struct EntryEditorView: View {
     @State private var markupTarget: Attachment?
     @State private var drawingToEdit: Attachment?
     @State private var viewerStartIndex: Int?
+    @State private var showingAssistant = false
     @FocusState private var bodyFocused: Bool
 
     var body: some View {
@@ -111,6 +112,9 @@ struct EntryEditorView: View {
             set: { viewerStartIndex = $0?.index }
         )) { start in
             AttachmentViewerView(attachments: visualAttachments, selectedIndex: start.index)
+        }
+        .sheet(isPresented: $showingAssistant) {
+            EditorAssistantSheet(entry: entry)
         }
     }
 
@@ -273,6 +277,15 @@ struct EntryEditorView: View {
                     .font(.title3)
             }
             .accessibilityLabel("Voice dictation")
+
+            Button {
+                showingAssistant = true
+            } label: {
+                Image(systemName: "sparkles")
+                    .font(.title3)
+                    .foregroundStyle(Color.inkAccent)
+            }
+            .accessibilityLabel("Draft assistant")
 
             Spacer()
 

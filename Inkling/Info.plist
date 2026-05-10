@@ -90,14 +90,14 @@
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
 
-    <!-- Permission strings (placeholders — Apple requires these once we use the APIs). -->
+    <!-- Permission strings — describe what the app actually does with each capability. -->
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Inkling can attach photos from your library to a journal entry. Photos stay on this device unless you opt in to sync.</string>
+    <string>Inkling can attach photos from your library to a journal entry. Photos stay on this device unless you opt in to a cloud provider in Settings.</string>
     <key>NSCameraUsageDescription</key>
-    <string>Inkling uses the camera to scan documents into your journal entries.</string>
+    <string>Inkling uses the camera to scan documents into your journal entries. Scans stay on this device unless you opt in to a cloud provider in Settings.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Inkling can record voice notes (future feature) — only when you tap record.</string>
+    <string>Inkling records voice notes when you tap the microphone in the editor. Recordings save as audio attachments alongside the entry.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Inkling transcribes handwritten notes on-device using Vision; this entitlement is reserved for future audio transcription.</string>
+    <string>Inkling transcribes voice notes and handwritten input on this device using Apple's Speech and Vision frameworks. No audio or text is sent to a server.</string>
 </dict>
 </plist>

@@ -121,13 +121,12 @@ struct ChatThreadDetailView: View {
             }
         }
         service = JournalChatService(surface: thread.surface, recentDigest: digest)
-
-        // Replay prior messages so the session has context across launches.
-        if let svc = service, !orderedMessages.isEmpty {
-            for msg in orderedMessages where msg.role == .user {
-                _ = try? await svc.reply(to: msg.content)
-            }
-        }
+        // Note: we deliberately don't replay prior turns into the model.
+        // LanguageModelSession can't persist its hidden state across app
+        // launches anyway, and replaying user turns blindly causes the
+        // model to re-generate (and remember) fresh confabulations every
+        // time the thread is re-opened. The visible chat history is for
+        // the writer; the model's memory is only the current session.
     }
 
     private func send() async {

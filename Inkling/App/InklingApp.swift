@@ -34,8 +34,10 @@ struct InklingApp: App {
                 }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
             }
-            // App menu — Settings… ⌘,
-            CommandGroup(after: .appSettings) {
+            // App menu — Settings… ⌘,. `replacing:` avoids a duplicate
+            // keyboard shortcut against SwiftUI's auto-generated item that
+            // points at the unimplemented orderFrontPreferencesPanel: action.
+            CommandGroup(replacing: .appSettings) {
                 Button("Settings…") {
                     NotificationCenter.default.post(name: .inklingShowSettingsRequested, object: nil)
                 }

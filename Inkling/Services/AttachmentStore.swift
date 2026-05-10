@@ -84,11 +84,17 @@ enum AttachmentStore {
     /// pointing at on-disk JPEGs in `Application Support/Inkling/attachments/`,
     /// imports them as Attachment rows, and clears the legacy arrays.
     /// Idempotent — safe to call on every launch.
+    ///
+    /// Implementation note: SwiftData/CoreData can't translate
+    /// `!photoFilenames.isEmpty` into SQL on a transformable attribute, so we
+    /// filter in-memory after a plain fetch. Cost is tiny — runs once, then
+    /// the legacy arrays are empty forever.
     static func migrateLegacyFilesIfNeeded(in context: ModelContext) {
-        let descriptor = FetchDescriptor<Entry>(
-            predicate: #Predicate { !$0.photoFilenames.isEmpty || !$0.audioFilenames.isEmpty }
-        )
-        let entries = (try? context.fetch(descriptor)) ?? []
+        let descriptor = FetchDescriptor<Entry>()
+        let allEntries = (try? context.fetch(descriptor)) ?? []
+        let entries = allEntries.filter {
+            !$0.photoFilenames.isEmpty || !$0.audioFilenames.isEmpty
+        }
         guard !entries.isEmpty else { return }
 
         for entry in entries {

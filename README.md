@@ -12,7 +12,7 @@ This repository is the source code for the shipped App Store app, made publicly 
 
 ## Try it
 
-The shipped app: [giantmushroom.studio/inkling](https://giantmushroom.studio/inkling/) · App Store (link added at launch).
+The shipped app: [giantmushroom.studio/inkus](https://giantmushroom.studio/inkus/) · App Store (link added at launch).
 
 ## What's inside
 
@@ -96,7 +96,7 @@ This is the entire point of the app. From the in-app privacy page:
 
 You can verify this. There are zero outbound network calls in the writing or AI paths. Search for `URLSession` in this repo and you will find no hits in those code paths.
 
-The full, plain-English policy lives at [giantmushroom.studio/inkling/privacy](https://giantmushroom.studio/inkling/privacy.html).
+The full, plain-English policy lives at [giantmushroom.studio/inkus/privacy](https://giantmushroom.studio/inkus/privacy.html).
 
 ## Contributing
 

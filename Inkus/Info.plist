@@ -19,6 +19,13 @@
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.lifestyle</string>
 
+    <!-- Export-compliance exemption. Inkus uses only Apple's OS-provided
+         encryption (URLSession HTTPS, Keychain, CryptoKit SHA-256 for PKCE
+         code challenge). No proprietary or third-party crypto. Falsifies
+         the "App Encryption Documentation" question on every upload. -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
